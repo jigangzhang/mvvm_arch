@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CombineEditText">
+        <attr name="textLeftIcon" format="reference" />
+        <attr name="editRightIcon" format="reference" />
+        <attr name="textRightIcon" format="reference" />
+        <attr name="textRightIconVisible" format="boolean" />
+        <attr name="rightIconSize" format="dimension" />
+        <attr name="leftIconVisible" format="boolean" />
+        <attr name="leftText" format="string" />
+        <attr name="editHintText" format="string" />
+        <attr name="editText" format="string" />
+        <attr name="leftTextVisible" format="boolean" />
+        <attr name="rightIconVisible" format="boolean" />
+        <attr name="editCursorVisible" format="boolean" />
+        <attr name="editEnabled" format="boolean" />
+        <attr name="editTextGravity">
+            <enum name="END" value="8388613" />
+            <enum name="START" value="8388611" />
+            <enum name="CENTER" value="17" />
+        </attr>
+        <attr name="editWidth" format="dimension" />
+        <attr name="innerImgMarginLeft" format="dimension" />
+        <attr name="innerImgMarginTop" format="dimension" />
+        <attr name="innerImgMarginRight" format="dimension" />
+        <attr name="innerImgMarginBottom" format="dimension" />
+        <attr name="innerTextSize" format="dimension" />
+
+        <attr name="hidePhoneNumber" format="boolean" />
+        <attr name="editInputType" format="enum">
+            <enum name="PHONE" value="3" />
+            <enum name="NUMBER" value="2" />
+            <enum name="PASSWORD_TEXT" value="128" />
+        </attr>
+        <attr name="mEditTextColor" format="color" />
+        <attr name="maxLength" format="integer" />
+        <attr name="digits" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="CompatTextView">
+        <attr name="rippleColor" format="color" />
+        <attr name="contentDrawable" format="reference" />
+        <attr name="maskDrawable" format="reference" />
+        <attr name="selectorDrawable" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="ProgressTimingView">
+        <attr name="text" format="string" />
+        <attr name="textSize" format="dimension" />
+        <attr name="backgroundCircleColor" format="color" />
+        <attr name="solidCircleColor" format="color" />
+        <attr name="textColor" format="color" />
+        <attr name="circleStrokeWidth" format="dimension" />
+        <attr name="duration" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="BannerLayout">
+        <attr name="selectedIndicatorColor" format="color|reference" />
+        <attr name="unSelectedIndicatorColor" format="color|reference" />
+        <attr name="indicatorShape" format="enum">
+            <enum name="rect" value="0" />
+            <enum name="oval" value="1" />
+        </attr>
+
+        <attr name="selectedIndicatorHeight" format="dimension|reference" />
+        <attr name="selectedIndicatorWidth" format="dimension|reference" />
+
+        <attr name="unSelectedIndicatorHeight" format="dimension|reference" />
+        <attr name="unSelectedIndicatorWidth" format="dimension|reference" />
+
+        <attr name="indicatorPosition" format="enum">
+            <enum name="centerBottom" value="0" />
+            <enum name="rightBottom" value="1" />
+            <enum name="leftBottom" value="2" />
+            <enum name="centerTop" value="3" />
+            <enum name="rightTop" value="4" />
+            <enum name="leftTop" value="5" />
+        </attr>
+
+        <attr name="indicatorSpace" format="dimension|reference" />
+        <attr name="indicatorMargin" format="dimension|reference" />
+        <attr name="autoPlayDuration" format="integer|reference" />
+        <attr name="scrollDuration" format="integer|reference" />
+        <attr name="isAutoPlay" format="boolean|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="IndicatorView">
+        <attr name="size" format="integer" />
+        <attr name="diameter" format="dimension" />
+        <attr name="selectedColor" format="color" />
+        <attr name="unSelectedColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomRatingBar">
+        <attr name="srb_borderColor" format="color" />
+        <attr name="srb_fillColor" format="color" />
+        <attr name="srb_backgroundColor" format="color" />
+        <attr name="srb_starBackgroundColor" format="color" />
+        <attr name="srb_pressedBorderColor" format="color" />
+        <attr name="srb_pressedFillColor" format="color" />
+        <attr name="srb_pressedBackgroundColor" format="color" />
+        <attr name="srb_pressedStarBackgroundColor" format="color" />
+        <attr name="srb_numberOfStars" format="integer" />
+        <attr name="srb_starSize" format="dimension" />
+        <attr name="srb_maxStarSize" format="dimension" />
+        <attr name="srb_starsSeparation" format="dimension" />
+        <attr name="srb_starBorderWidth" format="float" />
+        <attr name="srb_starCornerRadius" format="float" />
+        <attr name="srb_isIndicator" format="boolean" />
+        <attr name="srb_rating" format="float" />
+        <attr name="srb_stepSize" format="float" />
+        <attr name="srb_drawBorderEnabled" format="boolean" />
+        <attr name="srb_gravity" format="enum">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+        </attr>
+    </declare-styleable>
+
+</resources>

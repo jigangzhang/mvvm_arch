@@ -1,0 +1,68 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion build_version.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion build_version.minSdkVersion
+        targetSdkVersion build_version.targetSdkVersion
+        versionCode build_version.versionCode
+        versionName build_version.versionName
+
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+/**
+ * api 编译时不隐藏依赖类
+ * implementation 编译时隐藏依赖类
+ */
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api libs.appcompat
+    api libs.component_extension
+    api libs.recyclerview
+
+    api libs.timber
+
+    api libs.retrofit
+    api libs.retrofit_gson
+    api libs.retrofit_rxjava
+    api libs.okhttp
+
+    api libs.rxjava
+    api libs.rxandroid
+
+    api libs.glide
+
+    //使用Chrome来调试Android Application的工具
+    implementation libs.stetho
+    implementation libs.stetho_okhttp
+
+    implementation libs.multidex
+
+    debugApi libs.leakcanary_debug
+    releaseApi libs.leakcanary_release
+
+    testImplementation tests.junit
+    androidTestImplementation tests.runner
+    androidTestImplementation tests.espresso
+}
