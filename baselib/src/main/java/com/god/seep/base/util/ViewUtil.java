@@ -33,6 +33,9 @@ public class ViewUtil {
         return result;
     }
 
+    /**
+     * RecyclerView 或 list 相关的底部 footerView
+     */
     public static TextView generateFooterView(Context context, String text) {
         TextView footer = new TextView(context);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -69,12 +72,24 @@ public class ViewUtil {
         return bitmap;
     }
 
+    /**
+     * empty view, 在页面无数据时显示
+     *
+     * @link generateEmptyView
+     */
     public static LinearLayout generateEmptyView(Context context, int resId, String desc) {
         return generateEmptyView(context, resId, desc, "", null);
     }
 
     /**
-     * empty view
+     * 用例：1、list无数据时显示空页面；
+     * 2、Activity页面初始加载数据时为空白页面（不是此EmptyView），当未加载到数据（服务异常，网络异常等）时，显示此EmptyView。
+     *
+     * @param resId    drawable 资源 Id,用于显示空页面类型
+     * @param desc     空页面描述
+     * @param btnText  按钮名称
+     * @param listener 按钮点击事件
+     *                 contentType 空页面类型，无网络、服务异常 或其他。
      */
     public static LinearLayout generateEmptyView(Context context, int resId, String desc, String btnText, View.OnClickListener listener) {
         LinearLayout layout = new LinearLayout(context);
@@ -115,27 +130,39 @@ public class ViewUtil {
         return layout;
     }
 
+    /**
+     * 网络异常时展示空页面
+     *
+     * @param consumer 按钮点击事件
+     */
     public static void handleNet(Context context, final ViewGroup viewGroup, Consumer consumer) {
         final Context mContext = context.getApplicationContext();
         View view = viewGroup.getChildAt(0);
         if (view != null && !TAG_NET_CONTENT.equals(view.getTag())) {
-            viewGroup.addView(generateEmptyView(mContext, 0,
-                    "", "", v -> {
+            viewGroup.addView(generateEmptyView(mContext, R.drawable.ic_note,
+                    context.getString(R.string.noNetConnection), context.getString(R.string.reLoad), v -> {
                         if (NetUtil.isNetAvailable(mContext)) {
                             viewGroup.removeViewAt(0);
                             consumer.accept();
                         } else
-                            ToastHelper.showToast(mContext, "");
+                            ToastHelper.showToast(mContext, context.getString(R.string.PlsCheckNetConnection));
                     }), 0);
         }
     }
 
+    /**
+     * 隐藏 viewGroup的所有子 View
+     * 适用于显示空页面
+     */
     public static void hideView(ViewGroup viewGroup) {
         if (viewGroup == null) return;
         for (int i = 0; i < viewGroup.getChildCount(); i++)
             viewGroup.getChildAt(i).setVisibility(View.GONE);
     }
 
+    /**
+     * 显示 ViewGroup 的所有子 View
+     */
     public static void showView(ViewGroup viewGroup) {
         if (viewGroup == null) return;
         for (int i = 0; i < viewGroup.getChildCount(); i++)

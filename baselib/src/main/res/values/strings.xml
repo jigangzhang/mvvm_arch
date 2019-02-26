@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">baseLib</string>
+
+    <string name="reLoad">重新加载</string>
+    <string name="noNetConnection">网络异常</string>
+    <string name="PlsCheckNetConnection">请检查网络连接</string>
 </resources>

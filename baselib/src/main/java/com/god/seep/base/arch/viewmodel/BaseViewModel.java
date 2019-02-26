@@ -74,18 +74,6 @@ public class BaseViewModel<M extends BaseModel> extends AndroidViewModel impleme
 
     }
 
-    /**
-     * 加载更多， smartRefreshLayout
-     */
-    protected void loadMore() {
-    }
-
-    /**
-     * 刷新
-     */
-    protected void refresh() {
-    }
-
     protected void showLoading() {
         loadingEvent.postValue(true);
     }

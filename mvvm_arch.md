@@ -55,3 +55,34 @@
         9、换肤：
         10、回调函数：
         11、字体适配：SP适用于字体大小跟随用户字体大小设置。DP，一些特殊情况,不想跟随系统字体变化，可以使用DP。
+
+    四、性能优化：
+        AspectJ、ASM、ReDex
+        1、内存优化：
+            内存DUMP，使用 AndroidStudio自带的分析工具-profile，或者是MemoryAnalyzer分析hprof文件，
+            或者使用HaHa库，自定义代码分析（如：重复图片分析等，参考：https://github.com/jigangzhang/Chapter04）
+            
+        2、奔溃优化：
+            奔溃监控可使用 Bugly、阿里啄木鸟等监控平台
+            
+        3、卡顿优化：
+            通过DDMS 使用Systrace（Trace.traceBegin/end的使用）、traceview定位并分析具体情况；
+            或插桩、埋点等方式
+        
+        4、启动优化；
+        
+        5、IO优化：
+        
+        6、存储优化：
+        
+        7、网络优化：
+            流量监控等
+        
+        8、电量优化：
+        
+        9、UI渲染优化：
+            Layout Inspector 查看 View 层级；
+        
+        10、包体积优化：
+            
+            
