@@ -1,6 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
+    def prop = new Properties()
+    def dis = project.rootProject.file('local.properties').newDataInputStream()
+    prop.load(dis)
+    def storePath = prop.getProperty('keystore.path')
+    signingConfigs {
+        release {
+            storeFile file(storePath)
+            storePassword prop.getProperty('keystore.password')
+            keyAlias prop.getProperty('keystore.alias')
+            keyPassword prop.getProperty('keystore.alias_password')
+        }
+    }
+
     compileSdkVersion build_version.compileSdkVersion
 
     defaultConfig {
@@ -11,14 +24,56 @@ android {
         versionName build_version.versionName
 
         multiDexEnabled true
+        flavorDimensions ""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
+
+        debug {
+            debuggable true
+            zipAlignEnabled true
+            minifyEnabled false
+            shrinkResources false
+            if (storePath)
+                signingConfig signingConfigs.release
+        }
+    }
+
+    /**
+     * 多渠道包
+     */
+    productFlavors {
+        pro {
+            dimension ""
+            buildConfigField "String", "environment", '"pro"'
+        }
+        dev {
+            dimension ""
+            buildConfigField "String", "environment", '"dev"'
+        }
+        vip {
+            dimension ""
+        }
+        free {
+            dimension ""
+        }
+    }
+
+    //配置打包输出名称
+    applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                outputFileName = "Transfer_${defaultConfig.versionName}" +
+                        "_${variant.productFlavors[0].name}_${buildType.name}.apk"
+            }
     }
 
     compileOptions {
