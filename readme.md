@@ -44,7 +44,7 @@ View绘制流程：
             
 事件传递流程：
 <br>
-![avatar](事件分发1.png)
+<img src="事件分发1.png" width="500" height="300"/>
 <br>
    dispatchTouchEvent
        |
@@ -56,4 +56,4 @@ View绘制流程：
        |
    onClick...
    <br>
-![avatar](事件分发2.png)
+<img src="事件分发2.png" width="500" height="300"/>
