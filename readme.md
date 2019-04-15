@@ -50,9 +50,9 @@ View绘制流程：
        |
    onInterceptTouchEvent
        |
-   onTouchEvent
+   onTouch(listener)
        |
-   onTouch
+   onTouchEvent
        |
    onClick...
    <br>
