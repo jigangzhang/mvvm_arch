@@ -10,6 +10,7 @@
 ##### ssh、scp
 
 ##### 权限相关
+        chmod chown 
 
 ##### 文本相关
         vim: a/i 编辑， esc 退出编辑 
