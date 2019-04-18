@@ -18,9 +18,8 @@ UML类图
     Looper.loop();
     
     在死循环中从消息队列中获取消息进行处理：<br>
-        
-        将消息发送到对应的handler，由handler进行处理 -->
-        `msg.target.dispatchMessage(msg);`
+    将消息发送到对应的handler，由handler进行处理 -->
+    `msg.target.dispatchMessage(msg);`
         最后回收msg --> `msg.recycleUnchecked();`
         
 * 发送消息：<br>
@@ -29,17 +28,18 @@ UML类图
 * 消息处理：<br>
     由Looper分发消息至Handler：
         先由msg自带的callback处理，若没有则由Handler.Callback处理，若没有实现该接口，
-        最后由Handler内部的handleMessage处理。
-        
-        ``` public void dispatchMessage(Message msg) {
-                   if (msg.callback != null) {
-                       handleCallback(msg);
-                   } else {
-                       if (mCallback != null) {
-                           if (mCallback.handleMessage(msg)) {
-                               return;
-                           }
-                       }
-                       handleMessage(msg);
-                   }
-               }```
+        最后由Handler内部的handleMessage处理。        
+    ```
+    public void dispatchMessage(Message msg) {
+        if (msg.callback != null) {
+            handleCallback(msg);
+            } else {
+                if (mCallback != null) {
+                    if (mCallback.handleMessage(msg)) {
+                        return;
+                    }
+                }
+            handleMessage(msg);
+        }
+    }
+    ```
