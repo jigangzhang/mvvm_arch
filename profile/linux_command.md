@@ -21,3 +21,6 @@
         cat:
         tail:
         less:
+        
+##### 服务：
+        systemctl start/restart/stop/enable xxx.service

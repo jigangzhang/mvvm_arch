@@ -24,4 +24,6 @@
 
 ## Linux
 
+#### Linux [常用命令](profile/linux_command.md)
+
 ## Java Web 
