@@ -1,5 +1,5 @@
 
-## 网络请求流程源码分析
+## EventBus事件传递流程分析
 
 UML类图
 <br><img src="eventBus.png" width="500" height="300"/><br>
