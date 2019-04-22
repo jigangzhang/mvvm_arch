@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import com.facebook.stetho.Stetho;
+import com.god.seep.base.util.AppUtil;
 import com.squareup.leakcanary.LeakCanary;
 
 import androidx.multidex.MultiDexApplication;
@@ -15,6 +16,7 @@ public class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (!AppUtil.isMainProcess(this)) return;
         INSTANCE = this;
 
         if (BuildConfig.DEBUG) {

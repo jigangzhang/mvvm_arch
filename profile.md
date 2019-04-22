@@ -2,7 +2,7 @@
 
 ##### Retrofit2 [网络请求流程分析](profile/Retrofit2.md)
 
-##### LeakCanary
+##### LeakCanary [内存泄漏流程分析](profile/LeakCanary.md)
 
 ##### Glide
 
