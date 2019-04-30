@@ -19,7 +19,7 @@ ext {
             rxjava          : '2.2.7',
             rxandroid       : '2.1.1',
             rxpermission    : '0.10.2',
-            glide           : '4.8.0',
+            glide           : '4.9.0',
             stetho          : '1.5.0',
             leakcanary      : '1.6.2'
     ]
@@ -49,6 +49,7 @@ ext {
             rxpermission          : [group: 'com.github.tbruyelle', name: 'tbruyelle:rxpermissions', version: versions.rxpermission],
 
             glide                 : [group: 'com.github.bumptech.glide', name: 'glide', version: versions.glide],
+            glide_compiler        : [group: 'com.github.bumptech.glide', name: 'compiler', version: versions.glide],
 
             stetho                : [group: 'com.facebook.stetho', name: 'stetho', version: versions.stetho],
             stetho_okhttp         : [group: 'com.facebook.stetho', name: 'stetho-okhttp3', version: versions.stetho],

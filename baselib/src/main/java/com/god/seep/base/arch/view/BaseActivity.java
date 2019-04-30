@@ -61,6 +61,16 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
     }
 
     @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mBinding != null)

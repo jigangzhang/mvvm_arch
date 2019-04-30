@@ -52,6 +52,7 @@ dependencies {
     api libs.rxandroid
 
     api libs.glide
+    annotationProcessor libs.glide_compiler
 
     //使用Chrome来调试Android Application的工具
     implementation libs.stetho
