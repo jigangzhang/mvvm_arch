@@ -16,6 +16,10 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ## 设计模式
 
+##### [OO设计原则](profile/设计模式/OO设计原则.md)
+
+##### [策略模式](profile/设计模式/设计模式.md)
+
 ##### 单例模式
 
 ## 虚拟机
