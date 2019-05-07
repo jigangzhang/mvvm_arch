@@ -40,6 +40,7 @@ dependencies {
     api libs.appcompat
     api libs.component_extension
     api libs.recyclerview
+    api libs.recyclerview_helper
 
     api libs.timber
 

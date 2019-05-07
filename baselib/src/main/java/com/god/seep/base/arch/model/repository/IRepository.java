@@ -5,4 +5,10 @@ package com.god.seep.base.arch.model.repository;
  */
 public interface IRepository {
     void onDestroy();
+
+    interface IRemoteRepository extends IRepository {
+    }
+
+    interface ILocalRepository extends IRepository {
+    }
 }

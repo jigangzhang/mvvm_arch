@@ -14,6 +14,12 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### EventBus [事件传递流程分析](profile/EventBus.md)
 
+## Android
+
+##### APP启动流程
+
+##### View绘制流程
+
 ## 设计模式
 
 ##### [OO设计原则](profile/设计模式/OO设计原则.md)

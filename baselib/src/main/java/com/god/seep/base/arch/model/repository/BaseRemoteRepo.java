@@ -4,7 +4,7 @@ import com.god.seep.base.arch.model.datasource.HttpState;
 
 import androidx.lifecycle.LiveData;
 
-public class BaseRemoteRepo implements IRemoteRepository {
+public class BaseRemoteRepo implements IRepository.IRemoteRepository {
     private LiveData<HttpState> httpState;
 
     public BaseRemoteRepo(LiveData<HttpState> httpState) {
