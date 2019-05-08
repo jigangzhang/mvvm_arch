@@ -27,7 +27,7 @@ public abstract class BaseModel implements IModel {
     //primary repository, 有需要可在实现类中增加 repo类， 或考虑在此持有集合，统一管理
     private IRepository mRepository;
     private CompositeDisposable compositeDisposable;
-    protected MutableLiveData<HttpState> httpState;
+    protected MutableLiveData<HttpState> httpState;//有用，Observer下沉至 Model层时可用。
 
     public BaseModel(IRepository repository) {
         mRepository = repository;

@@ -22,7 +22,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, BaseViewMode
 
     @Override
     public BaseViewModel createViewModel() {
-        return new MainViewModel(this.getApplication(), new MainModel());
+        return new MainViewModel(this.getApplication());
     }
 
     BaseRecyclerViewAdapter adapter = new BaseRecyclerViewAdapter<ItemChapterBinding, Chapter>(R.layout.item_chapter) {

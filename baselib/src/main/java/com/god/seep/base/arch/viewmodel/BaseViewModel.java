@@ -13,6 +13,8 @@ import androidx.lifecycle.MutableLiveData;
  * ViewModel 处理业务数据， 一个 ViewModel 持有一个 Model
  * ViewModel与 View 作双向绑定，所有的业务操作都在此处执行 （View 的一些事件处理也在此处）
  * 具体的数据获取在 Model 层执行，ViewModel 只对数据进行业务相关操作
+ * <p>
+ * 将 LiveData 下沉至 Model层，直接在 Model层通知数据获取结果。
  */
 public class BaseViewModel<M extends BaseModel> extends AndroidViewModel implements IViewModel {
     private MutableLiveData<Boolean> loadingEvent = new MutableLiveData<>();

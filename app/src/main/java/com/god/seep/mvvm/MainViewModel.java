@@ -15,10 +15,11 @@ import androidx.lifecycle.MutableLiveData;
 import timber.log.Timber;
 
 public class MainViewModel extends BaseViewModel<MainModel> {
+    //可将LiveData 传至 Model，直接在 Model 层通知数据获取结果？？
     private MutableLiveData<List<Chapter>> chapterListEvent = new MutableLiveData<>();
 
-    public MainViewModel(@NonNull Application application, MainModel model) {
-        super(application, model);
+    public MainViewModel(@NonNull Application application) {
+        super(application, new MainModel());
     }
 
     public MutableLiveData<List<Chapter>> getChapterListEvent() {

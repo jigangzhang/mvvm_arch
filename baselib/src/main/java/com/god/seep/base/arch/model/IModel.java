@@ -6,6 +6,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 
 /**
  * model类：数据获取操作，remote、local
+ * 未添加在生命周期观察者中， 去掉 LifecycleObserver
  */
 public interface IModel extends LifecycleObserver {
     /**
