@@ -8,6 +8,10 @@ public class NetResource<T> {
     private String exceptionCode; // 错误码
     private String successMessage; // 返回提示信息
 
+    private int errorCode;
+    private String errorMsg;
+    private T data;
+
     public T getResult() {
         return result;
     }
@@ -46,5 +50,29 @@ public class NetResource<T> {
 
     public void setSuccessMessage(String successMessage) {
         this.successMessage = successMessage;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }

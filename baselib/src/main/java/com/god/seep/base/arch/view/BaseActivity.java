@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import timber.log.Timber;
 
 public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseViewModel> extends AppCompatActivity implements IView<VM> {
     protected D mBinding;
@@ -25,6 +26,11 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
         initBinding();
         initViewModel();
         initData();
+    }
+
+    @Override
+    public boolean isBusEnabled() {
+        return false;
     }
 
     private void initBinding() {
@@ -45,6 +51,7 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
         mViewModel.getLoadingEvent().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean showLoading) {
+                Timber.e("loading -- " + showLoading);
                 if (showLoading) {
                     showLoading();
                 } else {
@@ -55,7 +62,7 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
         mViewModel.getHttpState().observe(this, new Observer<HttpState>() {
             @Override
             public void onChanged(HttpState state) {
-
+                Timber.e("net state -- " + state.ordinal());
             }
         });
     }

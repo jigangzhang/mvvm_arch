@@ -1,12 +1,15 @@
 package com.god.seep.mvvm;
 
 import com.god.seep.base.arch.model.datasource.NetResource;
+import com.god.seep.base.net.Api;
 
-import io.reactivex.Flowable;
+import java.util.List;
+
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 
 public interface WebService {
-    @GET("")
-    Observable<NetResource> getHealth();
+
+    @GET(Api.Wan_Chapters)
+    Observable<NetResource<List<Chapter>>> getChapters();
 }

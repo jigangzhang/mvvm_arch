@@ -52,8 +52,20 @@ public class BaseObserver<T> extends ResourceObserver<T> {
         Timber.e(e);
         if (e instanceof IOException)
             httpState.postValue(HttpState.NetError);
-        else if (e instanceof HttpException)
-            httpState.postValue(HttpState.ServerError);
+        else if (e instanceof HttpException) {
+            int code = ((HttpException) e).code();
+            if (code == 401) {
+                Timber.e("401 authentication");
+            } else if (code >= 400 && code < 500) {
+                httpState.postValue(HttpState.ClientError);
+            } else if (code >= 500 && code < 600) {
+                httpState.postValue(HttpState.ServerError);
+            } else {
+                Timber.e(e, "code = %s", code);
+            }
+        } else {
+            Timber.e(e, "未知错误");
+        }
         onComplete();
     }
 

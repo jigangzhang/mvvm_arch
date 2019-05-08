@@ -39,6 +39,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api libs.appcompat
     api libs.component_extension
+    api libs.component_rx_liveData
+
     api libs.recyclerview
     api libs.recyclerview_helper
 

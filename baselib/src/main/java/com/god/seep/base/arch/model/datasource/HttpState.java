@@ -11,5 +11,7 @@ public enum HttpState {
 
     NetError,
 
+    ClientError,
+
     ServerError
 }

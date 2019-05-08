@@ -14,16 +14,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 public class HttpManager {
-    private static final int HOST_COUNT = 1;
-    public static final int DEFAULT_URL = 1;//base url type
-
     private static final int READ_TIMEOUT = 10;//单位 秒
     private static final int WRITE_TIMEOUT = 10;
     private static final int CONNECT_TIMEOUT = 10;
 
     private static final int CACHE_STALE_TIME = 60 * 60 * 24 * 2;//缓存失效 2 days
 
-    private static SparseArray<HttpManager> sHttpManager = new SparseArray<>(HOST_COUNT);//考虑多域名情况
+    private static SparseArray<HttpManager> sHttpManager = new SparseArray<>(Api.HOST_COUNT);//考虑多域名情况
 
     private Retrofit mRetrofit;
 
@@ -46,7 +43,7 @@ public class HttpManager {
                 .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
 //                .sslSocketFactory()//https证书
 //                .connectionPool(new ConnectionPool(8, 2, TimeUnit.MINUTES))//连接池，内部有默认实现
-                .cookieJar(new CookieJarImpl())
+//                .cookieJar(new CookieJarImpl())
                 .retryOnConnectionFailure(false);
 
         if (BuildConfig.DEBUG) {
@@ -61,7 +58,7 @@ public class HttpManager {
         mRetrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(hostType + "")
+                .baseUrl(Api.BaseUrls.get(hostType))
                 .client(builder.build())
                 .build();
     }

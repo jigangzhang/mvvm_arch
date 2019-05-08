@@ -16,8 +16,8 @@ import androidx.lifecycle.MutableLiveData;
  */
 public class BaseViewModel<M extends BaseModel> extends AndroidViewModel implements IViewModel {
     private MutableLiveData<Boolean> loadingEvent = new MutableLiveData<>();
-    private MutableLiveData<HttpState> httpState = new MutableLiveData<>();
-    private M mModel;
+    protected MutableLiveData<HttpState> httpState = new MutableLiveData<>();
+    protected M mModel;
 
     public BaseViewModel(@NonNull Application application) {
         super(application);
@@ -26,6 +26,7 @@ public class BaseViewModel<M extends BaseModel> extends AndroidViewModel impleme
     public BaseViewModel(@NonNull Application application, M model) {
         super(application);
         this.mModel = model;
+        mModel.setHttpState(httpState);
     }
 
     public MutableLiveData<Boolean> getLoadingEvent() {
