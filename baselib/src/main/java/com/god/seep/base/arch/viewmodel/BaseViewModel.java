@@ -15,6 +15,10 @@ import androidx.lifecycle.MutableLiveData;
  * 具体的数据获取在 Model 层执行，ViewModel 只对数据进行业务相关操作
  * <p>
  * 将 LiveData 下沉至 Model层，直接在 Model层通知数据获取结果。
+ * <p>
+ * 参考：https://listenzz.github.io/android-lifecyle-works-perfectly-with-rxjava.html
+ * <p>
+ * ViewModel: 页面销毁重建会触发 onDestroy ？所以 回收资源应该放到 onCleared 中？
  */
 public class BaseViewModel<M extends BaseModel> extends AndroidViewModel implements IViewModel {
     private MutableLiveData<Boolean> loadingEvent = new MutableLiveData<>();
@@ -75,6 +79,14 @@ public class BaseViewModel<M extends BaseModel> extends AndroidViewModel impleme
     @Override
     public void onAny() {
 
+    }
+
+    /**
+     * 当 Activity 或 Fragment 真正 finish 的时候，框架会调用 ViewModel 中的 onCleared 方法，我们需要在这个方法里面清除不再使用的资源。
+     */
+    @Override
+    protected void onCleared() {
+        super.onCleared();
     }
 
     protected void showLoading() {

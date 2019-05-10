@@ -1,4 +1,6 @@
 package com.god.seep.mvvm;
 
-public class App   {
+import com.god.seep.base.BaseApplication;
+
+public class App extends BaseApplication {
 }
