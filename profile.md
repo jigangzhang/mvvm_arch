@@ -32,7 +32,9 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### [工厂模式](profile/设计模式/工厂模式.md)
 
-##### 单例模式
+##### [单例模式](profile/设计模式/单例模式.md)
+
+##### [命令模式](profile/设计模式/命令模式.md)
 
 ## 虚拟机
 
