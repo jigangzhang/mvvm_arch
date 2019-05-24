@@ -46,6 +46,10 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### [状态模式](profile/设计模式/状态模式.md)
 
+##### [代理模式](profile/设计模式/代理模式.md)
+
+##### [复合模式](profile/设计模式/复合模式.md)
+
 ## 虚拟机
 
 ## Gradle
