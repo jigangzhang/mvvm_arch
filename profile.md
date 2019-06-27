@@ -20,6 +20,12 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### View绘制流程
 
+##### service和多进程
+
+## NDK系列
+
+#### [CMakeList.txt 配置]()
+
 ## 设计模式
 
 ##### [OO设计原则](profile/设计模式/OO设计原则.md)
@@ -51,6 +57,10 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 ##### [复合模式](profile/设计模式/复合模式.md)
 
 ## 虚拟机
+
+#### [Class文件格式](profile/虚拟机/Class文件格式/Class文件格式.md)
+
+#### [Dex文件格式](profile/虚拟机/Dex文件格式/Dex文件格式.md)
 
 ## Gradle
 
