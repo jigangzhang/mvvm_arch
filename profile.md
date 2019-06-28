@@ -62,6 +62,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 #### [Dex文件格式](profile/虚拟机/Dex文件格式/Dex文件格式.md)
 
+#### [ELF文件格式](profile/虚拟机/ELF文件格式/ELF文件格式.md)
+
 ## Gradle
 
 ## Hook
