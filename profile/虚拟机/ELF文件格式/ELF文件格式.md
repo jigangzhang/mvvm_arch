@@ -249,7 +249,19 @@ segment 数据结构：
         遍历Segment内容，还是要借助 Section Header Table
         
         
+#### 动态库加载确定绝对地址的辅助手段
+        
 ##### .got section
     
     Global Offset Table
     表的每一项存储的是该ELF文件用到的符号（函数或变量）地址
+    
+##### PLT表
+    
+    Procedure Linkage Table
+    表项存储的是一段小小的代码，触发符号地址的计算以及跳转到正确的符号地址上
+    Trampoline Code
+    .plt
+    
+GOT、PLT、Trampoline Code 是动态库加载整个流程顺利进行的关键，待重新深入了解 GOT PLT
+<br><img src="PIC介绍.jpg" width="500" height="300"/><br>
