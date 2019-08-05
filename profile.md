@@ -22,9 +22,31 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### service和多进程
 
+##### Java Hook
+
+##### 内存优化 [Android内存优化](profile/Android/内存优化.md)
+
+##### 捕获Native奔溃及后续处理[]()
+
+##### 生成Jar包和AAR包 [参考](https://blog.51cto.com/1206995290qq/2331959)
+    
+    task buildXXX(type: Copy, dependsOn: [build]) {
+        delete 'libs/XXX.jar'
+        from('build/intermediates/packaged-classes/release/')   //生成的classes.jar在此路径下
+        into('libs/')
+        include('classes.jar')
+        rename('classes.jar', 'XXX.jar')        //如果有资源文件，同时会生成AAR文件，在 build/outputs/aar 路径下
+    }
+
 ## NDK系列
 
-#### [CMakeList.txt 配置]()
+##### [CMakeList.txt 配置](profile/NDK/CMakeList配置.md)
+
+##### [C++11 语法](profile/NDK/C++11语法介绍.md)
+
+##### [JNI语法规则](profile/NDK/JNI语法.md)
+
+##### [Native Hook]()
 
 ## 设计模式
 
@@ -58,18 +80,20 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ## 虚拟机
 
-#### [Class文件格式](profile/虚拟机/Class文件格式/Class文件格式.md)
+##### [Class文件格式](profile/虚拟机/Class文件格式/Class文件格式.md)
 
-#### [Dex文件格式](profile/虚拟机/Dex文件格式/Dex文件格式.md)
+##### [Dex文件格式](profile/虚拟机/Dex文件格式/Dex文件格式.md)
 
-#### [ELF文件格式](profile/虚拟机/ELF文件格式/ELF文件格式.md)
+##### [ELF文件格式](profile/虚拟机/ELF文件格式/ELF文件格式.md)
+
+##### [编译器](profile/虚拟机/编译器.md)
+
+##### [内存分配](profile/虚拟机/内存分配.md)
 
 ## Gradle
 
-## Hook
-
 ## Linux
 
-#### Linux [常用命令](profile/linux_command.md)
+##### Linux [常用命令](profile/linux_command.md)
 
 ## Java Web 
