@@ -88,6 +88,10 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### [编译器](profile/虚拟机/编译器.md)
 
+##### [虚拟机的创建](profile/虚拟机/虚拟机的创建.md)
+
+##### [虚拟机的启动](profile/虚拟机/虚拟机的启动.md)
+
 ##### [内存分配](profile/虚拟机/内存分配.md)
 
 ## Gradle
