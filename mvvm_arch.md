@@ -34,6 +34,9 @@
             ViewModel层：
                     --ViewModel（枢纽）：处理数据的获取（Repository）与分发（LiveData）
                     --DataBinding（ViewModel）：处理数据的双向绑定
+                    使用 RxJava 的 Flowable 作为数据源, 在 ViewModel 的 Flowable.subscribe( )里调用 LiveData#setValue()
+                    LiveData 就是真实值的包装，长期可观察的对象，不可以也不应该不断指向新的对象
+                    把 ViewModel 里 LiveData 的引用传递给 Repo，LiveData 更多是要在 ViewModel 和 View 这边去发挥作用，而 Repo 本身是可以被更多地方使用，例如几个 Repo 之间可以互相调用，也即现在比较普遍的模块化框架下几个模块之间的功能互相 invoke，这种情况下我们并不需要 LiveData，所以直接传LiveData不太好？
 
         2、生命周期控制：
             使用LifeCycle将生命周期相关业务分离出去（比如：监听器的绑定解除等）；
