@@ -70,17 +70,27 @@
 类信息的伪代码：
 ```
     struct class_def {
-        uint class_idx;     //指向 type_ids，代表本类的类型
+        uint class_idx;     //指向 type_ids，代表本类的类型，通过它可找到代表类类名的字符串，也叫符号引用（Symbol Reference）
         uint access_flags;  //访问标志，如：private等
-        uint superclass_idx;//指向 type_ids，代表基类类型，若无基类则值为 NO_INDEX -1
-        uint interfaces_off;//指向文件对应位置，那里存储一个 type_list，该数组存储了每个接口的type_idx索引
+        uint superclass_idx;//指向 type_ids，代表基类类型，若无基类则值为 NO_INDEX -1，父类类名
+        uint interfaces_off;//指向文件对应位置，那里存储一个 type_list，该数组元素（type_item）存储了每个接口的type_idx索引，通过type_item的type_idx可找到接口类名
         uint source_file_idx;//指向 string_ids，源文件名
         uint annotations_off;//注解有关的信息
-        uint class_data_off;    //指向文件对应位置， 存储细节信息，class_data_item类型
+        uint class_data_off;    //指向文件对应位置， 存储细节信息，class_data_item类型，包含这个类的成员变量和成员函数信息
         uint static_values_off; //存储初始化类的静态变量的值，默认为0或null， encoded_array_item
     }
 ```
     类的成员变量、成员函数等信息通过 class_data_off 域指向 class_data_item结构体描述
+    class_data_item结构体：
+        direct_methods数组和virtual_methods数组代表该类定义的方法以及它继承或实现的方法
+        direct_methods包含该类中所有 static、private函数以及构造函数
+        virtual_methods包含该类中除static、final以及构造函数之外的函数，不包括从父类继承的函数（若类中未重载）
+        static_fields和instance_fields代表静态成员以及非静态成员
+        encoded_field结构体：
+            field_idx_diff 索引值的偏移量，通过它能找到成员变量的变量名、数据类型、所在类的类名
+        encoded_method结构体：
+            method_idx_diff 索引值的偏移量，通过它能找到成员函数的函数名、函数签名、所在类的类名
+            code_off 指向该成员方法对应的dex指令码内容
     
 如下图：
 <br><img src="class_data_item格式.jpg" width="500" height="300"/><br>

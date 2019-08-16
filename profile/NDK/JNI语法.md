@@ -62,6 +62,16 @@
         gVm = vm;
         return JNI_VERSION_1_6;
     }
+    
+    FindClass：
+        用于查找指定类名的类信息，该函数实现位于 jni_internal.cc中
+        目标类的搜索工作由 ClassLinker 的 FindClass/FindSystemClass函数（返回 mirror Object对象）完成
+        最后通过 ScopedObjectAccess 类实例的 AddLocalReference 将mirror Class对象转换成jclass的值返回
+    RegisterNatives：
+        用于将native层的函数与Java层中标记为native的函数关联起来，该函数是每一个JNI库（SO文件）使用前必须调用的
+        内部调用 RegisterNativeMethods函数，输入参数 methods数组为JNINativeMethod结构体（自己构造）元素
+        通过 ScopedObjectAccess的 Decode函数将jclass转换为 mirror Class，使用FindMethod函数在mirror Class中找到匹配函数名、签名相同的函数，返回一个ArtMethod
+        最后调用 ArtMethod的RegisterNative函数
 
 #### 内存管理
     
@@ -82,6 +92,22 @@
     static jobject gObj = nullptr;//java对象的全局引用
     gObj = env->NewGlobalRef(obj);//为Java对象创建全局引用，方法内
     env->DeleteGlobalRef(gObj);//删除全局引用，否则会发生内存泄漏
+    
+    JNI层中创建的 jobject对象默认是局部引用（Local Reference），函数从JNI层返回后，局部引用的对象很可能被回收
+    若需要长期保存一个jobject对象，将局部引用转换成全局引用（Global Reference）
+    全局引用对象需要使用者主动释放，进程能持有的全局引用对象总个数是有限制的
+    弱全局对象（Weak Global Reference）有可能被回收（无需主动释放），使用前调用 JNIEnv的IsSameObject函数与 nullptr比较
+                
+    NewGlobalRef    函数内部使用 ScopedObjectAccess 的Decode解析出jobject对应的mirror Object对象，再调用JavaVMExt的AddGlobalRef函数添加到容器中
+    DeleteGlobalRef
+    NewWeakGlobalRef
+    DeleteWeakGlobalRef
+    NewLocalRef
+    DeleteLocalRef
+    一个Java进程只有一个JavaVME对象，代表虚拟机
+    JavaVME对象中有一个globals成员变量，是一个容器，存储进程中创建的全局引用对象
+    AddGlobalRef函数返回一个IndirectRef值，与mirror Object地址有关，全局变量存取有关
+    局部引用，使用JNIEnvExt对象的 AddLocalRef函数存储，JNIEnvExt对象包含一个Locals_成员变量，用于存储在JNIEnv环境中创建的局部引用对象
         
 
 #### 文件操作
