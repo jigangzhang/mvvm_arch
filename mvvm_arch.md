@@ -73,6 +73,8 @@
             或插桩、埋点等方式
         
         4、启动优化；
+            IdleHandler（https://www.wanandroid.com/wenda/show/8723）
+            onCreate，onStart，onResume中耗时较短但非必要的代码可以放到IdleHandler中执行，减少启动时间
         
         5、IO优化：
         

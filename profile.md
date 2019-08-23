@@ -16,7 +16,9 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ## Android
 
-##### APP启动流程
+##### APP启动流程 [启动流程](profile/Android/App启动流程.md)
+
+##### PMS流程解析 [PackageManagerService解析]()
 
 ##### View绘制流程
 
@@ -93,6 +95,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 ##### [虚拟机的启动](profile/虚拟机/虚拟机的启动.md)
 
 ##### [dex2oat](profile/虚拟机/dex2oat.md)
+
+##### [解释执行和JIT](profile/虚拟机/解释执行和JIT.md)
 
 ##### [内存分配](profile/虚拟机/内存分配.md)
 
