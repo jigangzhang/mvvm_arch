@@ -20,6 +20,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### PMS流程解析 [PackageManagerService解析]()
 
+##### AMS流程解析 [ActivityManagerService解析]()
+
 ##### View绘制流程
 
 ##### service和多进程
@@ -97,6 +99,10 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 ##### [dex2oat](profile/虚拟机/dex2oat.md)
 
 ##### [解释执行和JIT](profile/虚拟机/解释执行和JIT.md)
+
+##### [ART中的JNI](profile/虚拟机/ART中的JNI.md)
+
+##### [CheckPoints、线程同步及信号处理](profile/虚拟机/线程同步.md)
 
 ##### [内存分配](profile/虚拟机/内存分配.md)
 
