@@ -30,6 +30,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### 内存优化 [Android内存优化](profile/Android/内存优化.md)
 
+##### Java异常处理[Java异常处理](profile/Android/Java异常处理.md)
+
 ##### 捕获Native奔溃及后续处理[]()
 
 ##### 生成Jar包和AAR包 [参考](https://blog.51cto.com/1206995290qq/2331959)
@@ -103,6 +105,10 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 ##### [ART中的JNI](profile/虚拟机/ART中的JNI.md)
 
 ##### [CheckPoints、线程同步及信号处理](profile/虚拟机/线程同步.md)
+
+##### [内存分配与释放](profile/虚拟机/内存分配与释放.md)
+
+##### [Heap介绍](profile/虚拟机/Heap.md)
 
 ##### [内存分配](profile/虚拟机/内存分配.md)
 
