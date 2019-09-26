@@ -108,6 +108,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### [内存分配与释放](profile/虚拟机/内存分配与释放.md)
 
+##### [ART中的GC](profile/虚拟机/ART中的GC.md)
+
 ##### [Heap介绍](profile/虚拟机/Heap.md)
 
 ##### [内存分配](profile/虚拟机/内存分配.md)

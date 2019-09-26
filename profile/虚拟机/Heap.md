@@ -270,4 +270,196 @@
         
 #### Heap之三
 
+    第一部分，介绍Heap构造函数的一部分以及涉及的几个关键数据结构
+    第二部分，介绍Heap构造函数中涉及和空间对象有关的内容
+    现在，介绍其中与内存回收有关的功能，包括：
+        Heap Trim的作用
+        Heap CollectorGarbageInternal，垃圾回收入口函数
+        PreZygoteFork，ZygoteSpace空间在该函数中创建
+        如何解决CMS导致的内存碎片问题
     
+    Heap Trim：
+        ART中，内存除了可以回收垃圾之外还有一个Trim操作（削减）
+        Reclaim主要是指将垃圾对象的内存还给对应的空间
+        Trim则是处理某些模块中无须使用的内存，处理方式可能是把内存资源归还给操作系统，也可以是把当下不需要的内存归还给对应模块的资源池
+        Heap::Trim：
+            if ！CareAboutPauseTimes，
+                if段用于将胖锁减肥为瘦锁，胖锁占用一个mirror Monitor对象，瘦锁使用一个LockWord对象，胖锁变瘦锁可以释放mirror Monitor所需的内存
+                ScopedSuspendAll ssa，
+                runtime->GetMonitorList->DeflateMonitors，
+            TrimIndirectReferenceTables，Trim各个Java线程JNIEnv的locals（指向一个IndirectReferenceTable对象）
+            TrimSpaces，削减空间对象的空闲内存
+            runtime->GetArenaPool->TrimMaps，削减其他地方用到的内存
+        Heap::TrimSpaces：
+            用于削减空间对象的空闲内存资源
+            ScopedThreadStateChange tsc，
+            StartGC，发起一次GC请求，触发此次GC的原因为kGcCauseTrim，使用的回收器类型为kCollectorTypeHeapTrim，某种意义上说，Trim可以看作是一种GC，StartGC仅仅是发起GC请求，真正的GC不是在StartGC中实施的，GC处理完后，需要调用FinishGC来标识本次GC请求处理完成
+            ScopedObjectAccess soa，
+            for循环，遍历continuous_spaces_
+                if space->IsMallocSpace，只能对MallocSpace进行Trim
+                    if malloc_space->IsRosAllocSpace||！CareAboutPauseTimes，
+                        malloc_space->Trim，调用RosAllocSpace或DIMallocSpace的Trim，内部通过madvise通知操作系统哪些内存不再需要
+                    malloc_space->Size，
+            更新一些统计变量
+            FinishGC，设置本次GC请求处理完成
+    
+    CollectGarbageInternal：
+        garbage_collectors_中有四个回收器对象，分别是StickyMarkSweep、PartialMarkSweep、MarkSweep以及SemiSpace（支持kCollectorTypeSS和kCollectorTypeGSS）
+        gc_plan_数组存储的是回收策略，其所存元素的值依次为kGcTypeSticky、kGcTypePartial、kGcTypeFull
+        Heap::CollectGarbageInternal：
+            入参，gc_type 本次回收期望使用的回收策略，gc_cause 触发本次回收的原因（用于GC相关信息的统计），clear_soft_references 本次回收是否清除SoftReference对象
+            本函数返回值为本次实际使用的回收策略，如未做内存回收时返回kGcTypeNone
+            switch gc_type，
+                kGcTypePartial，
+                    if ！HasZygoteSpace
+                        return kGcTypeNone，如果不存在ZygoteSpace空间，则不允许kGcTypePartial回收
+            WaitForGcToCompleteLocked，虚拟机同一时间只能处理一个GC请求，此函数用于等待当前正在执行的GC请求处理完，如果当前没有正在处理的GC请求，则调用线程处理本次GC请求
+            IsMovingGc，回收器是否属于会移动对象的回收器
+            bytes_allocated_before_gc=GetBytesAllocated，记录本次GC前内存使用的字节数
+            if kAllocatorTypeRosAlloc||kAllocatorTypeDIMalloc，
+                collector=FindCollectorByGcType，根据gc_type以及collector_type_的取值返回对应的回收器类型，如kGcTypeSticky返回StickyMarkSweep
+            if IsGcConcurrent，
+                concurrent_start_bytes_=max，concurrent_start_bytes_是控制触发concurrent回收的关键参数，代表一个水位线，一旦内存使用超过这个水位线，就可以触发concurrent回收，现在先把这个水位线设置得非常高
+            collector->Run，运行垃圾回收器，具体的回收器对象在Run函数中完成垃圾回收的所有工作
+            RequestTrim，往task_processor_中添加一个HeapTrimTask，其内部将调用HeapTrim
+            reference_processor_->EnqueueClearedReferences，将和实际对象解绑的Reference加到ReferenceQueue中
+            GrowForUtilization，本次GC执行完毕，现在做一些工作，一些数学计算，它决定了下次GC的力度
+            FinishGC，设置本次GC请求处理完成
+            ScopedObjectAccess soa，
+            soa.VM->UnloadNativeLibraries，卸载不再使用的动态库，和ClassLoader对象的回收有关
+            return gc_type
+        CollectGarbageInternal主要工作是找到合适的垃圾回收器对象并完成垃圾回收，除此之外还做一些统计工作，这些统计工作的结果将决定下次垃圾回收的力度，即使用何种回收策略
+        Heap::GrowForUtilization：
+            完成上面统计工作
+            入参，collector_ran 指向执行完垃圾回收工作的垃圾回收器，bytes_allocated_before_gc 表示本次回收前已分配的字节数
+            bytes_allocated=GetBytesAllocated，获取新的已分配内存字节数，应该小于bytes_allocated_before_gc 
+            gc_type=collector_ran->GetGcType，获取本次回收使用的垃圾回收策略
+            HeapGrowthMultiplier，返回一个因子，如果进程状态不是kProcessStateJankPerceptible，该因子值为1.0，否则取值为Heapforeground_heap_growth_multiplier_（由虚拟机运行参数-XX:ForegroundHeapGrowthMultiplier控制，默认为2.0）
+            adjusted_min_free，来自虚拟机参数-XX:HeapMinFree，默认取值为512KB，下面将得到经过调整后的值，若当前处于前台，那么取值为1MB
+            adjusted_max_free，来自虚拟机参数-XX:HeapMaxFree，默认取值为2MB，下面将得到经过调整后的值，若当前处于前台，那么取值为4MB
+            if gc_type！=kGcTypeSticky，本次gc_type不是kGcTypeSticky
+                GetTargetHeapUtilization，返回Heap target_utilization_，由虚拟机运行参数-XX:HeapTargetUtilization控制，默认为0.5，表示期望的堆内存利用率
+                delta，实际堆内存
+                target_size=...，将计算变量target_size的值，和触发Concurrent回收有关
+                next_gc_type_=kGcTypeSticky，下次GC时期望使用的回收策略，本次没有使用kGcTypeSticky的话，希望下次使用
+            else，本次GC用的回收策略是kGcTypeSticky，要考虑下次用的回收策略
+                non_sticky_gc_type=HasZygoteSpace？kGcTypePartial:kGcTypeFull，存在ZygoteSpace，non_sticky_gc_type为kGcTypePartial
+                non_sticky_collector=FindCollectorByGcType，
+                kStickyGcThroughputAdjustment值为1.0，GetEstimatedThroughput 计算吞吐量（此次回收释放的字节数除以耗费时间，字节/毫秒），max_allowed_footprint_初值来自虚拟机-Xms（dalvik.vm.heapstartsize，默认为4MB）
+                if kStickyGcThroughputAdjustment...bytes_allocated<=max_allowed_footprint_，根据回收的吞吐量等信息决定一次GC的策略
+                    next_gc_type_=kGcTypeSticky，下次回收还使用kGcTypeSticky
+                else，
+                    next_gc_type_=non_sticky_gc_type，下次回收力度要大，不能再使用kGcTypeSticky
+                if bytes_allocated+adjusted_max_free<max_allowed_footprint_，用于计算target_size
+                    target_size=bytes_allocated+adjusted_max_free，
+                else，
+                    target_size=max（bytes_allocated，max_allowed_footprint_），
+            if ！ignore_max_footprint_，和Concurrent回收有关，ignore_max_footprint_和虚拟机启动参数-XX:IgnoreMaxFootprint有关，若此参数不存在，默认为false
+                SetIdealFootprint，设置max_allowed_footprint_值为target_size
+                if IsGCConcurrent，Concurrent GC，CMS满足
+                    kMaxConcurrentRemainingBytes，为512KB
+                    kMinConcurrentRemainingBytes，为128KB
+                    if remaining_bytes>max_allowed_footprint_，
+                        remaining_bytes=kMinConcurrentRemainingBytes，
+                    concurrent_start_bytes_=max（max_allowed_footprint_-remaining_bytes，bytes_allocated），设置concurrent_start_bytes_的新值
+        可以GrowForUtilization函数为基础，总结整理影响GC行为的参数（对虚拟机GC参数调优，虚拟机运行参数）
+        concurrent_start_bytes_对concurrent gc的触发至关重要，ART中，若某次内存分配的字节数超过这个变量，则虚拟机会主动触发一次concurrent gc
+        Heap::AllocObjectWithAllocator：
+            内存分配相关
+            Mirror Object* obj，
+            ...，分配内存
+            if AllocatorMayHaveConcurrentGC && IsGcConcurrent，
+                CheckConcurrentGC，
+        Heap::CheckConcurrentGC：
+            if new_num_bytes_allocated>=concurrent_start_bytes_，如果新分配的内存字节数大于concurrent_start_bytes_
+                RequestConcurrentGCAndSaveObject，往task_processor_中添加一个ConcurrentGCTask任务，该任务将调用Heap ConcurrentGC函数
+        Heap::ConcurrentGC：
+            if ！Runtime->IsShuttingDown，
+                if WaitForGcToComplete==kGcTypeNone，等待正在处理的GC请求处理完毕
+                    next_gc_type=next_gc_type_，设置本次GC期望使用的回收策略
+                    if force_full && next_gc_type==kGcTypeSticky，某些情况下需要调整回收策略
+                        next_gc_type=HasZygoteSpace？kGcTypePartial：kGcTypeFull，
+                    if CollectGarbageInternal==kGcTypeNone，触发垃圾回收，若返回kGcTypeNone，说明没有开展回收工作
+                        下面尝试使用力度更大的回收策略进行回收，直到回收成功（CollectGarbageInternal不为kGcTypeNone）
+                        for，遍历gc_plan_，
+                            CollectGarbageInternal，
+    
+    PreZygoteFork：
+        Zygote进程在fork子进程之前，会调用Heap PreZygoteFork
+        Heap::PreZygoteFork：
+            if ！HasZygoteSpace，判断Heap zygote_space_是否为空，第一次调用的话为空
+                CollectGarbageInternal，kGcTypeFull，先做一次最高力度的垃圾回收
+                non_moving_space_->Trim，类型为DIMallocSpace，VMRuntime.java中newNonMovableArray函数用于创建数组，它会从non_moving_space_中分配内存，Bitmap、Java NIO DirectByteBuffers将用到它，它们对象本身不在non_moving_space中，但它们的某些成员变量（Bitmap mBuffer数组）需要使用non_moving_space
+            same_space，
+            if kCompactZygote，为true
+                ZygoteCompactingCollector zygote_collector，是SemiSpace的派生类，可看成是SemiSpace
+                zygote_collector.BuildBins，
+                space::BumpPointerSpace target_space，创建一个BumpPointerSpace，从non_moving_space的End开始，到Limit结束，non_moving_space从Begin到End处存放的是该空间中的存活对象，从End到Limit则是空闲的，在这段空闲内存上构造一个BumpPointerSpace空间target_space
+                if IsMovingGc，
+                else，
+                    zygote_collector.SetFromSpace，设置SemiSpace回收器的From Space为mian_space_，说明要把main_space_中的存活对象拷贝到To Space中
+                    reset_main_space=true，
+                zygote_collector.SetToSpace，设置To Space为target_space
+                zygote_collector.SetSwapSemiSpaces，设为false
+                zygote_collector.Run，此函数结束后main_space_中的存活对象全部拷贝到non_moving_space中
+                if reset_main_space，
+                    main_space_->GetMemMap->Protect，main_space_的存活对象都拷贝走了，将整体释放这块内存空间
+                    madvise，
+                    main_space_->ReleaseMemMap，
+                    RemoveSpace，
+                    old_main_space=main_，
+                    CreateMainMallocSpace，再重新创建一个新的main_space_
+                    delete old_main_space，
+                    AddSpace，
+                else，
+                    ...
+                non_moving_space->SetEnd，target_space.End，
+                non_moving_space->SetLimit，target_space.Limit，
+            ChangeCollector，设置回收器类型，使用前台回收器类型，foreground_collector_type_
+            old_alloc_space=non_moving_space，把non_moving_space变成ZygoteSpace
+            RemoveSpace，移除old_alloc_space
+            CreateZygoteSpace，将创建两个空间对象，函数返回值对应为一个ZygoteSpace空间，它包含原main_space_和原non_moving_space的存活对象，可以认为它是Zygote进程在fork第一个子进程前所存的非垃圾对象（不包括ImageSpace内容），另一个空间是第个参数non_moving_space_，在CreateZygoteSpace中原non_moving_space会被修改
+            zygote_space_=old_alloc_space->CreateZygoteSpace，
+            ...
+            delete old_alloc_space，
+            AddSpace（zygote_space_），
+            non_moving_space_->SetFootprintLimit，non_moving_space_会继续存在，因为子进程也会使用Bitmap或者DirectByteBuffers
+            AddSpace（non_moving_space_），
+        PreZygoteFork内容包括：
+            先做一次GC
+            然后借助ZygoteCompactingCollector GC将main_space_的存活对象拷贝到non_moving_space中
+            创建一个新的main_space_空间对象、一个新的ZygoteSpace空间对象以及一个新的non_moving_space空间对象
+            Zygote每次fork子进程都会调用PreZygoteFork，但如果已经存在ZygoteSpace空间的话，该函数将不会做什么工作
+    
+    内存碎片的解决：
+        MarkSweep会造成内存碎片
+        ART会在应用进程退到后台（处于用户不可感知的状态）时触发一次内存回收，这次回收将通过SemiSpace解决内存碎片的问题
+        Heap::UpdateProcessState：
+            if old_process_state！=new_process_state
+                jank_perceptible=new_process_state==kProcessStateJankPerceptible，
+                if jank_perceptible，
+                    RequestCollectorTransition，foreground_collector_type_，为防止奔溃立刻切换到前台
+                else，如果进程为用户不可感知的状态，则使用后台回收器进行回收，对CMS，background_collector_type_取值为HSC，这会导致Heap PerfromHomogeneousSpaceCompact函数被调用
+                    RequestCollectorTransition，background_collector_type_
+        Heap::PerformHomogeneousSpaceCompact：
+            collector_type_running_=kCollectorTypeHomogeneousSpaceCompact，
+            to_space=main_space_backup_.release，main_space_backup_和main_space_一样大，main_space_backup_在之前与main_space_一同创建，但是没有加入Heap continuous_spaces_中，所以，上面的垃圾回收等内容都不会涉及它
+            from_space=main_space_，把main_space_的东西拷贝到main_space_backup_中，利用SemiSpace回收器，即完成垃圾对象的回收，有消灭了内存碎片
+            ...，
+            AddSpace（to_space），
+            collector=Compact，将from_space的非垃圾对象拷贝到to_space中
+            ...，
+            main_space_=to_space，将main_space_指向干净的to_space
+            main_space_backup_.reset，
+            RemoveSpace（from_space），
+            SetSpaceAsDefault，
+        Heap::Compact：
+            if target_space！=source_space，
+                使用semi_space_collector_进行内存回收和压缩
+                semi_space_collector_->SetSwapSemiSpaces，
+                semi_space_collector_->SetFromSpace，
+                semi_space_collector_->SetToSpace，
+                semi_space_collector_->Run，
+                return semi_space_collector_，
+            else，
+                ...
