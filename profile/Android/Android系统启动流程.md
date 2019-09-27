@@ -752,10 +752,543 @@
     
     SystemServer进程在启动的过程中会启动PackageManagerService，PackageManagerService启动后会将系统中的应用程序安装完成。
     在此前已经启动的ActivityManagerService会将Launcher启动起来。
-    启动Launcher的入口为ActivityManagerService的systemReady函数：
+    启动Launcher的入口为ActivityManagerService的systemReady函数（SystemsServer的startOtherServices方法中）：
         mActivityManagerService.systemReady(() -> {
             mSystemServiceManager.startBootPhase(SystemService.PHASE_ACTIVITY_MANAGER_READY);
             mActivityManagerService.startObservingNativeCrashes();
             ...
         }, BOOT_TIMINGS_TRACE_LOG);
+    ActivityManagerService的systemReady方法：
+        synchronized(this) {
+            if (mSystemReady) {
+                //如果已经调用了所有的receiver，接着执行从SystemServer传递过来的 boot phase
+                if (goingCallback != null) {
+                    goingCallback.run();
+                }
+                return;
+            }
+            mHasHeavyWeightFeature = mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CANT_SAVE_STATE);
+            mLocalDeviceIdleController= LocalServices.getService(DeviceIdleController.LocalService.class);
+            mAssistUtils = new AssistUtils(mContext);
+            mVrController.onSystemReady();
+            // 确保我们有当前的profile信息，因为它是安全检查所需要的。
+            mUserController.onSystemReady();
+            mRecentTasks.onSystemReadyLocked();
+            mAppOpsService.systemReady();
+            mSystemReady = true;
+        }
+        sTheRealBuildSerial = IDeviceIdentifiersPolicyService.Stub.asInterface(
+                            ServiceManager.getService(Context.DEVICE_IDENTIFIERS_SERVICE)).getSerial();
+        ArrayList<ProcessRecord> procsToKill = null;
+        synchronized(mPidsSelfLocked) {
+            for (int i=mPidsSelfLocked.size()-1; i>=0; i--) {       遍历mPidsSelfLocked这个列表
+                ProcessRecord proc = mPidsSelfLocked.valueAt(i);
+                if (!isAllowedWhileBooting(proc.info)){             判断元素ProcessRecord 是否满足某种条件
+                    if (procsToKill == null) {
+                        procsToKill = new ArrayList<ProcessRecord>();
+                    }
+                    procsToKill.add(proc);                          将满足条件的元素加入另一个列表procsToKill中，貌似是要杀死的进程信息？
+                }
+            }
+        }
+        synchronized(this) {
+            if (procsToKill != null) {
+                for (int i=procsToKill.size()-1; i>=0; i--) {
+                    ProcessRecord proc = procsToKill.get(i);
+                    removeProcessLocked(proc, true, false, "system update done");   Removing system update proc
+                }
+            }        
+            //现在我们已经清理了所有的更新过程，我们已经准备好启动真正的进程，并且知道我们不会再践踏它们。
+            mProcessesReady = true;
+        }
+        synchronized(this) {
+            //确保我们没有现成的processes
+            if (mFactoryTest == FactoryTest.FACTORY_TEST_LOW_LEVEL) {
+                ResolveInfo ri = mContext.getPackageManager().resolveActivity(new Intent(Intent.ACTION_FACTORY_TEST),STOCK_PM_FLAGS);
+                CharSequence errorMsg = null;
+                if (ri != null) {
+                    ActivityInfo ai = ri.activityInfo;
+                    ApplicationInfo app = ai.applicationInfo;
+                    if ((app.flags&ApplicationInfo.FLAG_SYSTEM) != 0) {     判断系统应用？
+                        mTopAction = Intent.ACTION_FACTORY_TEST;
+                        mTopData = null;
+                        mTopComponent = new ComponentName(app.packageName,ai.name);
+                    } else {
+                        errorMsg = mContext.getResources().getText(com.android.internal.R.string.factorytest_not_system);
+                    }
+                } else {
+                    errorMsg = mContext.getResources().getText(com.android.internal.R.string.factorytest_no_action);
+                }
+                if (errorMsg != null) {
+                    mTopAction = null;
+                    mTopData = null;
+                    mTopComponent = null;
+                    Message msg = Message.obtain();
+                    msg.what = SHOW_FACTORY_ERROR_UI_MSG;
+                    msg.getData().putCharSequence("msg", errorMsg);
+                    mUiHandler.sendMessage(msg);                        发送错误信息？
+                }
+            }
+        }
+        retrieveSettings();
+        final int currentUserId = mUserController.getCurrentUserId();
+        synchronized (this) {
+            readGrantedUriPermissionsLocked();          权限相关
+        }
+        final PowerManagerInternal pmi = LocalServices.getService(PowerManagerInternal.class);
+        if (pmi != null) {
+            pmi.registerLowPowerModeObserver(ServiceType.FORCE_BACKGROUND_CHECK,
+                            state -> updateForceBackgroundCheck(state.batterySaverEnabled));
+            updateForceBackgroundCheck(
+                            pmi.getLowPowerState(ServiceType.FORCE_BACKGROUND_CHECK).batterySaverEnabled);
+        } else {
+                    Slog.wtf(TAG, "PowerManagerInternal not found.");
+        }
+        if (goingCallback != null) goingCallback.run();             执行从SystemServer传递过来的 boot phase
+        traceLog.traceBegin("ActivityManagerStartApps");
+        mBatteryStatsService.noteEvent(BatteryStats.HistoryItem.EVENT_USER_RUNNING_START,Integer.toString(currentUserId), currentUserId);
+        mBatteryStatsService.noteEvent(BatteryStats.HistoryItem.EVENT_USER_FOREGROUND_START,Integer.toString(currentUserId), currentUserId);
+        mSystemServiceManager.startUser(currentUserId);
+        synchronized (this) {
+            //只启动支持加密的持久应用程序，一旦用户被解锁，我们将回来，并启动unaware的应用程序
+            startPersistentApps(PackageManager.MATCH_DIRECT_BOOT_AWARE);
+            mBooting = true;        启动最初的activity
+            //为系统用户启用home activity，以便系统始终可以引导。当未设置系统用户时，我们不这样做，因为在这种情况下，设置向导应该去处理home activity
+            if (UserManager.isSplitSystemUser() && Settings.Secure.getInt(mContext.getContentResolver(),
+                                     Settings.Secure.USER_SETUP_COMPLETE, 0) != 0) {
+                ComponentName cName = new ComponentName(mContext, SystemUserHomeActivity.class);
+                AppGlobals.getPackageManager().setComponentEnabledSetting(cName,
+                                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0, UserHandle.USER_SYSTEM);
+            }
+            startHomeActivityLocked(currentUserId, "systemReady");
+            if (AppGlobals.getPackageManager().hasSystemUidErrors()) {
+                Slog.e(TAG, "UIDs on the system are inconsistent, you need to wipe your data partition or your device will be unstable.");
+                mUiHandler.obtainMessage(SHOW_UID_ERROR_UI_MSG).sendToTarget();
+            }
+            if (!Build.isBuildConsistent()) {
+                Slog.e(TAG, "Build fingerprint is not consistent, warning user");
+                mUiHandler.obtainMessage(SHOW_FINGERPRINT_ERROR_UI_MSG).sendToTarget();
+            }
+            long ident = Binder.clearCallingIdentity();
+            Intent intent = new Intent(Intent.ACTION_USER_STARTED);
+            intent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY | Intent.FLAG_RECEIVER_FOREGROUND);
+            intent.putExtra(Intent.EXTRA_USER_HANDLE, currentUserId);
+            broadcastIntentLocked(null, null, intent, null, null, 0, null, null, null, OP_NONE,
+                                    null, false, false, MY_PID, SYSTEM_UID, currentUserId);     发广播
+            intent = new Intent(Intent.ACTION_USER_STARTING);
+            intent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
+            intent.putExtra(Intent.EXTRA_USER_HANDLE, currentUserId);
+            broadcastIntentLocked(null, null, intent, null, new IIntentReceiver.Stub() {
+                @Override
+                public void performReceive(Intent intent, int resultCode, String data, Bundle extras, 
+                        boolean ordered, boolean sticky, int sendingUser) throws RemoteException {
+                                        }
+            }, 0, null, null, new String[] {INTERACT_ACROSS_USERS}, OP_NONE, null, true, false, MY_PID, SYSTEM_UID, UserHandle.USER_ALL);
+            Binder.restoreCallingIdentity(ident);
+            mStackSupervisor.resumeFocusedStackTopActivityLocked();             重点？
+            mUserController.sendUserSwitchBroadcasts(-1, currentUserId);        用户切换广播？
+            
+            BinderInternal.nSetBinderProxyCountWatermarks(6000,5500);
+            BinderInternal.nSetBinderProxyCountEnabled(true);
+            BinderInternal.setBinderProxyCountCallback(new BinderInternal.BinderProxyLimitListener() {
+                @Override
+                public void onLimitReached(int uid) {
+                    Slog.wtf(TAG, "Uid " + uid + " sent too many Binders to uid " + Process.myUid());
+                    if (uid == Process.SYSTEM_UID) {
+                        Slog.i(TAG, "Skipping kill (uid is SYSTEM)");
+                    } else {
+                        killUid(UserHandle.getAppId(uid), UserHandle.getUserId(uid), "Too many Binders sent to SYSTEM");
+                    }
+                }
+            }, mHandler);
+        }
+    systemReady函数中调用了ActivityStackSupervisor的resumeFocusedStackTopActivityLocked函数
+    通过ActivityStackSupervisor运行所有的ActivityStacks
+    ActivityStackSupervisor resumeFocusedStackTopActivityLocked：
+        if (!readyToResume()) {     初次应该返回true
+            return false;
+        }
+        if (targetStack != null && isFocusedStack(targetStack)) {       从上面的ActivityManagerService中传过来的为null（系统启动时）
+            return targetStack.resumeTopActivityUncheckedLocked(target, targetOptions);
+        }
+        final ActivityRecord r = mFocusedStack.topRunningActivityLocked();  mFocusedStack当前接收输入或启动下一个activity的堆栈
+        if (r == null || !r.isState(RESUMED)) {
+            mFocusedStack.resumeTopActivityUncheckedLocked(null, null);     从SystemServer过来可能会执行这里
+        } else if (r.isState(RESUMED)) {
+            //从MoveTaskToFront操作中启动任何残留的应用程序转换
+            mFocusedStack.executeAppTransition(targetOptions);
+        }
+        return false;
+    可能会执行resumeTopActivityUncheckedLocked或者executeAppTransition方法
+    ActivityStack对象是用来描述Activity堆栈的
+    ActivityStack resumeTopActivityUncheckedLocked：
+        确保堆栈顶部的activity处于resumed，如果有东西resumed返回true，否则返回false
+        直接调用此方法是不安全的，因为它可能导致非focused堆栈中的activity resumed
+        应使用ActivityStackSupervisor.resumeFocusedStackTopActivityLocked resumed当前系统状态的正确activity
+        if (mStackSupervisor.inResumeTopActivity) {     默认为false，是为防止该函数递归调用
+            return false;       // 不要递归
+        }
+        boolean result = false;
+        mStackSupervisor.inResumeTopActivity = true;        //防止递归
+        result = resumeTopActivityInnerLocked(prev, options);   //使栈中的activity resume
+        //恢复顶层activity时，可能有必要暂停顶层activity（例如，返回到锁屏。由于顶层activity最后会恢复，
+        //因此我们在resumeTopActivityUncheckedLocked中取消了正常的暂停逻辑。 
+        //在此处再次调用ActivityStackSupervisor.checkReadyForSleepLocked以确保任何必要的暂停逻辑发生。
+        //在不管是否锁屏都要显示activity的情况下，将跳过对ActivityStackSupervisor.checkReadyForSleepLocked的调用。
+        final ActivityRecord next = topRunningActivityLocked(true /* focusableOnly */);
+        if (next == null || !next.canTurnScreenOn()) {
+            checkReadyForSleep();
+        }
+        mStackSupervisor.inResumeTopActivity = false;       //重置为默认值
+        return result;
+        
+    ActivityStack resumeTopActivityInnerLocked：
+        ...
+        if (!hasRunningActivity) {
+            // 堆栈中没有剩余的activity，看看其他地方
+            return resumeTopActivityInNextFocusableStack(prev, options, "noMoreActivities");
+        }
+        ...
+    ActivityStack resumeTopActivityInNextFocusableStack：
+        if (adjustFocusToNextFocusableStack(reason)) {      //找到下一个合适的可调焦堆栈并使其聚焦
+            // 如果该堆栈未覆盖整个屏幕或在辅助显示器上（没有主堆栈），请尝试将焦点移至具有运行中的activity的下一个可见堆栈
+            return mStackSupervisor.resumeFocusedStackTopActivityLocked(mStackSupervisor.getFocusedStack(), prev, null);
+        }
+        // 现在启动launcher…（未找到可运行的activity）
+        ActivityOptions.abort(options);
+        if (DEBUG_STATES) 
+            Slog.d(TAG_STATES, "resumeTopActivityInNextFocusableStack: " + reason + ", go home");
+        if (DEBUG_STACK) 
+            mStackSupervisor.validateTopActivitiesLocked();
+        //只有在home显示时才resume home
+        return isOnHomeDisplay() && mStackSupervisor.resumeHomeStackTask(prev, reason);
+    ActivityStackSupervisor resumeHomeStackTask：
+        if (!mService.mBooting && !mService.mBooted) {
+            return false;
+        }
+        mHomeStack.moveHomeStackTaskToTop();
+        ActivityRecord r = getHomeActivity();
+        final String myReason = reason + " resumeHomeStackTask";
+        //只有当home activity还没有结束时才可以继续
+        if (r != null && !r.finishing) {        //系统boot时launcher还未启动，此处应该为空
+            moveFocusableActivityStackToFrontLocked(r, myReason);
+            return resumeFocusedStackTopActivityLocked(mHomeStack, prev, null);
+        }
+        return mService.startHomeActivityLocked(mCurrentUser, myReason);
+    ActivityManagerService startHomeActivityLocked：
+        Intent intent = getHomeIntent();        创建home intent
+        ActivityInfo aInfo = resolveActivityInfo(intent, STOCK_PM_FLAGS, userId);
+        if (aInfo != null) {
+            intent.setComponent(new ComponentName(aInfo.applicationInfo.packageName, aInfo.name));
+            //如果home应用程序当前正在被instrumented，不要这样做
+            aInfo = new ActivityInfo(aInfo);
+            aInfo.applicationInfo = getAppInfoForUser(aInfo.applicationInfo, userId);
+            ProcessRecord app = getProcessRecordLocked(aInfo.processName,aInfo.applicationInfo.uid, true);
+            if (app == null || app.instr == null) {         //判断app是否已启动
+                intent.setFlags(intent.getFlags() | FLAG_ACTIVITY_NEW_TASK);
+                final int resolvedUserId = UserHandle.getUserId(aInfo.applicationInfo.uid);
+                // 用于ANR调试，以验证用户activity是否是实际启动的activity
+                final String myReason = reason + ":" + userId + ":" + resolvedUserId;
+                mActivityStartController.startHomeActivity(intent, aInfo, myReason);
+            }
+        } else {
+            Slog.wtf(TAG, "No home screen found for " + intent, new Throwable());
+        }
+        return true;
+    getHomeIntent函数中创建了Intent，并将mTopAction和mTopData传入。
+    mTopAction的值为Intent.ACTION_MAIN，并且如果系统运行模式不是低级工厂模式则将intent的Category设置为Intent.CATEGORY_HOME。
+    ActivityManagerService的startHomeActivityLocked函数，假设系统的运行模式不是低级工厂模式，
+    判断符合Action为Intent.ACTION_MAIN，Category为Intent.CATEGORY_HOME的应用程序是否已经启动，如果没启动则调用方法启动该应用程序。
+    这个被启动的应用程序就是Launcher，因为Launcher的Manifest文件中的intent-filter标签匹配了Action为Intent.ACTION_MAIN，Category为Intent.CATEGORY_HOME
+    packages/apps/Launcher2/AndroidManifest.xml：
+        ...
+        <activity
+            android:name="com.android.launcher2.Launcher"
+            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true"
+            android:stateNotNeeded="true"
+            android:resumeWhilePausing="true"
+            android:theme="@style/Theme"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="nosensor">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.MONKEY"/>
+            </intent-filter>
+        </activity>
+        ...
+    看Launcher的 manifest文件，其action为Intent.ACTION_MAIN，Category为Intent.CATEGORY_HOME
+    这样Launcher 应用程序就被启动起来了
     
+    桌面应用图标显示流程：
+        packages/apps/Launcher3/src/com/android/launcher3/Launcher.java：
+            onCreate：
+                LauncherAppState app = LauncherAppState.getInstance(this);
+                mOldConfig = new Configuration(getResources().getConfiguration());
+                mModel = app.setLauncher(this);
+                if (!mModel.startLoader(currentScreen)) {
+                    if (!internalStateHandled) {
+                        //如果我们不同步绑定，请在第一页绑定完成时显示淡入淡出的动画
+                        mDragLayer.getAlphaProperty(ALPHA_INDEX_LAUNCHER_LOAD).setValue(0);
+                    }
+                }
+                ...
+            获取LauncherAppState的实例并调用它的setLauncher函数并将Launcher对象传入，然后调用startLoader函数
+        packages/apps/Launcher3/src/com/android/launcher3/LauncherAppState.java：
+            LauncherModel setLauncher(Launcher launcher) {
+                getLocalProvider(mContext).setLauncherProviderChangeListener(launcher);
+                mModel.initialize(launcher);
+                return mModel;
+            }
+        packages/apps/Launcher3/src/com/android/launcher3/LauncherModel.java：
+            //将其设置为加载程序的当前启动程序活动对象（Set this as the current Launcher activity object for the loader）
+            public void initialize(Callbacks callbacks) {
+                synchronized (mLock) {
+                    Preconditions.assertUIThread();
+                    mCallbacks = new WeakReference<>(callbacks);
+                }
+            }
+            //启动加载程序。如果可能，尝试同步绑定synchronousBindPage
+            public boolean startLoader(int synchronousBindPage) {
+                //启动加载程序前启用队列。它将在Launcher.finishBindingItems中禁用
+                InstallShortcutReceiver.enableInstallQueue(InstallShortcutReceiver.FLAG_LOADER_RUNNING);
+                synchronized (mLock) {
+                    //如果我们知道线程不会做任何事情，就不要麻烦启动线程
+                    if (mCallbacks != null && mCallbacks.get() != null) {
+                        final Callbacks oldCallbacks = mCallbacks.get();
+                        //从同步加载过程中清除任何挂起的绑定可运行项。
+                        mUiExecutor.execute(oldCallbacks::clearPendingBinds);
+                        // 如果已经有一个在运行，告诉它停止
+                        stopLoader();
+                        LoaderResults loaderResults = new LoaderResults(mApp, sBgDataModel,mBgAllAppsList, synchronousBindPage, mCallbacks);
+                        if (mModelLoaded && !mIsLoaderTaskRunning) {
+                            //将已加载的项集划分为同步绑定的项集，以及正常(异步)绑定的所有其他内容。
+                            loaderResults.bindWorkspace();
+                            // 现在，继续发布所有应用程序的绑定，因为还有其他问题。
+                            loaderResults.bindAllApps();
+                            loaderResults.bindDeepShortcuts();
+                            loaderResults.bindWidgets();
+                            return true;
+                        } else {
+                            startLoaderForResults(loaderResults);       model应该还未加载，所以应该调用此方法
+                        }
+                    }
+                }
+                return false;
+            }
+            public void startLoaderForResults(LoaderResults results) {
+                synchronized (mLock) {
+                    stopLoader();
+                    mLoaderTask = new LoaderTask(mApp, mBgAllAppsList, sBgDataModel, results);
+                    runOnWorkerThread(mLoaderTask);
+                }
+            }
+            //如果从工作线程调用会立即执行runnable，否则会被工作线程的handler post 执行
+            private static void runOnWorkerThread(Runnable r) {
+                if (sWorkerThread.getThreadId() == Process.myTid()) {
+                    r.run();
+                } else {
+                    sWorker.post(r);    //如果不在工作线程，那发送到属于工作线程的handler处理
+                }
+            }
+        在initialize函数中会将Callbacks，也就是传入的Launcher 封装成一个弱引用对象。
+        因此我们得知mCallbacks变量指的就是封装成弱引用对象的Launcher，这个mCallbacks后文会用到它。
+        Launcher的onCreate函数又调用了LauncherModel的startLoader函数
+        startLoader函数中有调用了startLoaderForResults
+        startLoaderForResults函数中运行了LoaderTask，其继承了Runnable
+        最终会执行LoaderTask
+        packages/apps/Launcher3/src/com/android/launcher3/model/LoaderTask.java：
+            run：
+                synchronized (this) {
+                    if (mStopped) {         如果我们已经停止，请快速跳过。
+                        return;
+                    }
+                }
+                LauncherModel.LoaderTransaction transaction = mApp.getModel().beginLoader(this)，
+                //第一步开始
+                loadWorkspace();        加载工作空间
+                verifyNotStopped();
+                mResults.bindWorkspace();   绑定工作空间
+                sendFirstScreenActiveInstallsBroadcast();  //在第一个屏幕上通知安装程序包带有活动安装的包。发送第一个屏幕广播
+                // Take a break，第一步完成，等待空闲
+                waitForIdle();
+                verifyNotStopped();
+                // second step，第二步开始
+                loadAllApps();          加载所有的app
+                verifyNotStopped();
+                mResults.bindAllApps(); 绑定所有的app
+                verifyNotStopped();
+                updateIconCache();      更新icon缓存
+                // Take a break，第二步完成，等待空闲
+                waitForIdle();
+                verifyNotStopped();
+                // third step，第三步开始
+                loadDeepShortcuts();    加载deep shortcuts
+                verifyNotStopped();
+                mResults.bindDeepShortcuts();   绑定deep shortcuts
+                // Take a break，第三步完成
+                waitForIdle();
+                verifyNotStopped();
+                // fourth step，第四步开始
+                TraceHelper.partitionSection(TAG, "step 4.1: loading widgets");
+                mBgDataModel.widgetsModel.update(mApp, null);       加载widgets
+                verifyNotStopped();
+                mResults.bindWidgets();     绑定widgets
+                transaction.commit();
+            private void loadAllApps() {
+                final List<UserHandle> profiles = mUserManager.getUserProfiles();
+                mBgAllAppsList.clear();     // Clear the list of apps
+                for (UserHandle user : profiles) {
+                    //查询应用程序集
+                    final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, user);
+                    // 若没有任何App则失败， TODO: Fix this. Only fail for the current user.
+                    if (apps == null || apps.isEmpty()) {
+                        return;
+                    }
+                    boolean quietMode = mUserManager.isQuietModeEnabled(user);
+                    // Create the ApplicationInfos
+                    for (int i = 0; i < apps.size(); i++) {
+                        LauncherActivityInfo app = apps.get(i);
+                        // 这将构建图标位图
+                        mBgAllAppsList.add(new AppInfo(app, user, quietMode), app);
+                    }
+                }
+                if (FeatureFlags.LAUNCHER3_PROMISE_APPS_IN_ALL_APPS) {
+                    // 获取所有活动会话并将它们添加到所有应用程序列表中
+                    for (PackageInstaller.SessionInfo info :mPackageInstaller.getAllVerifiedSessions()) {
+                        mBgAllAppsList.addPromiseApp(mApp.getContext(),
+                                PackageInstallerCompat.PackageInstallInfo.fromInstallingState(info));
+                    }
+                }
+                mBgAllAppsList.added = new ArrayList<>();
+            }
+        Launcher是用工作区的形式来显示系统安装的应用程序的快捷图标，每一个工作区都是来描述一个抽象桌面的，它由n个屏幕组成，
+        每个屏幕又分n个单元格，每个单元格用来显示一个应用程序的快捷图标。
+        loadWorkspace函数用来加载工作区信息，loadAllApps函数是用来加载系统已经安装的应用程序信息
+        loadAllApps函数中，通过mLauncherApps获取所有的app，mBgAllAppsList中将构建的App信息传入（包含icon），在bindAllApps函数中显示
+        packages/apps/Launcher3/src/com/android/launcher3/model/LoaderResults.java：
+            public void bindAllApps() {
+                final ArrayList<AppInfo> list = (ArrayList<AppInfo>) mBgAllAppsList.data.clone();   //浅拷贝，App信息
+                Runnable r = new Runnable() {
+                    public void run() {
+                        Callbacks callbacks = mCallbacks.get();     //mCallbacks为上面传入的Launcher实例
+                        if (callbacks != null) {
+                            callbacks.bindAllApplications(list);    //见Launcher的bindAllApplications函数
+                        }
+                    }
+                };
+                mUiExecutor.execute(r);
+            }
+        Launcher：
+            //添加所有应用程序的图标。方法的实现见LauncherModel.Callbacks
+            public void bindAllApplications(ArrayList<AppInfo> apps) {
+                mAppsView.getAppsStore().setApps(apps);     //显示app icon？
+                if (mLauncherCallbacks != null) {
+                    mLauncherCallbacks.bindAllApplications(apps);
+                }
+            }
+        mAppsView，所有应用程序屏幕的主容器视图
+        packages/apps/Launcher3/src/com/android/launcher3/allapps/AllAppsContainerView.java：
+            public AllAppsStore getAppsStore() {
+                return mAllAppsStore;
+            }
+            protected void onFinishInflate() {
+                super.onFinishInflate();
+                // 这是一个焦点侦听器，它将焦点从视图代理到列表视图，这是围绕搜索框工作，从获得第一个焦点和显示光标。
+                setOnFocusChangeListener((v, hasFocus) -> {
+                    if (hasFocus && getActiveRecyclerView() != null) {
+                        getActiveRecyclerView().requestFocus();
+                    }
+                });
+                mHeader = findViewById(R.id.all_apps_header);
+                rebindAdapters(mUsingTabs, true /* force */);
+                mSearchContainer = findViewById(R.id.search_container_all_apps);
+                mSearchUiManager = (SearchUiManager) mSearchContainer;
+                mSearchUiManager.initialize(this);
+            }
+            private void rebindAdapters(boolean showTabs, boolean force) {
+                if (showTabs == mUsingTabs && !force) {
+                    return;
+                }
+                replaceRVContainer(showTabs);
+                mUsingTabs = showTabs;
+                mAllAppsStore.unregisterIconContainer(mAH[AdapterHolder.MAIN].recyclerView);
+                mAllAppsStore.unregisterIconContainer(mAH[AdapterHolder.WORK].recyclerView);
+                if (mUsingTabs) {
+                    mAH[AdapterHolder.MAIN].setup(mViewPager.getChildAt(0), mPersonalMatcher);
+                    mAH[AdapterHolder.WORK].setup(mViewPager.getChildAt(1), mWorkMatcher);
+                    onTabChanged(mViewPager.getNextPage());
+                } else {
+                    mAH[AdapterHolder.MAIN].setup(findViewById(R.id.apps_list_view), null);
+                    mAH[AdapterHolder.WORK].recyclerView = null;
+                }
+                setupHeader();
+                mAllAppsStore.registerIconContainer(mAH[AdapterHolder.MAIN].recyclerView);
+                mAllAppsStore.registerIconContainer(mAH[AdapterHolder.WORK].recyclerView);
+            }
+            public class AdapterHolder {
+                void setup(@NonNull View rv, @Nullable ItemInfoMatcher matcher) {
+                    appsList.updateItemFilter(matcher);
+                    recyclerView = (AllAppsRecyclerView) rv;
+                    recyclerView.setEdgeEffectFactory(createEdgeEffectFactory());
+                    recyclerView.setApps(appsList, mUsingTabs);         绑定app信息
+                    recyclerView.setLayoutManager(layoutManager);
+                    recyclerView.setAdapter(adapter);                   绑定adapter
+                    recyclerView.setHasFixedSize(true);
+                    // No animations will occur when changes occur to the items in this RecyclerView.
+                    recyclerView.setItemAnimator(null);
+                    FocusedItemDecorator focusedItemDecorator = new FocusedItemDecorator(recyclerView);
+                    recyclerView.addItemDecoration(focusedItemDecorator);
+                    adapter.setIconFocusListener(focusedItemDecorator.getFocusListener());
+                    applyVerticalFadingEdgeEnabled(verticalFadingEdge);
+                    applyPadding();
+                }
+            }
+        开机流程，onFinishInflate函数在加载完xml文件时就会调用，
+        其内部类AdapterHolder的setup函数中得到AllAppsRecyclerView用来显示App列表，
+        并将apps的信息列表传进去，并为AllAppsRecyclerView设置Adapter。这样应用程序快捷图标的列表就会显示在屏幕上。
+        到这里Launcher启动流程就算完了
+        
+        packages/apps/Launcher3/src/com/android/launcher3/allapps/AllAppsStore.java：
+        //维护所有应用程序集合的实用程序类
+            //设置当前应用程序集
+            public void setApps(List<AppInfo> apps) {
+                mComponentToAppMap.clear();
+                addOrUpdateApps(apps);
+            }
+            //添加或更新列表中的现有应用程序
+            public void addOrUpdateApps(List<AppInfo> apps) {
+                for (AppInfo app : apps) {
+                    mComponentToAppMap.put(app.toComponentKey(), app);
+                }
+                notifyUpdate();
+            }
+            private void notifyUpdate() {
+                if (mDeferUpdates) {
+                    mUpdatePending = true;
+                    return;
+                }
+                int count = mUpdateListeners.size();
+                for (int i = 0; i < count; i++) {
+                    mUpdateListeners.get(i).onAppsUpdated();
+                }
+            }
+            
+#### Android系统启动流程
+    
+    1、启动电源以及系统启动
+        当电源按下时引导芯片代码开始从预定义的地方（固化在ROM）开始执行。加载引导程序Bootloader到RAM，然后执行。
+    2、引导程序BootLoader
+        引导程序BootLoader是在Android操作系统开始运行前的一个小程序，它的主要作用是把系统OS拉起来并运行。
+    3、Linux内核启动
+        内核启动时，设置缓存、被保护存储器、计划列表、加载驱动。当内核完成系统设置，它首先在系统文件中寻找init.rc文件，并启动init进程。
+    4、init进程启动
+        初始化和启动属性服务，并且启动Zygote进程。
+    5、Zygote进程启动
+        创建JavaVM并为JavaVM注册JNI，创建服务端Socket，启动SystemServer进程。
+    6、SystemServer进程启动
+        启动Binder线程池和SystemServiceManager，并且启动各种系统服务。
+    7、Launcher启动
+        被SystemServer进程启动的ActivityManagerService会启动Launcher，Launcher启动后会将已安装应用的快捷图标显示到界面上。

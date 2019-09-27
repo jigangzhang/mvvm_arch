@@ -16,7 +16,9 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ## Android
 
-##### APP启动流程 [启动流程](profile/Android/App启动流程.md)
+##### Android系统启动流程 [系统启动流程](profile/Android/Android系统启动流程.md)
+
+##### APP进程启动流程 [进程启动流程](profile/Android/App进程启动流程.md)
 
 ##### PMS流程解析 [PackageManagerService解析]()
 
