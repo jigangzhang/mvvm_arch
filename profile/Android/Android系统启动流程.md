@@ -239,6 +239,7 @@
                             throw new IllegalStateException("command != null");
                         }
                         // We don't know whether the remote side of the socket was closed or not until we attempt to read from it from processOneCommand. This shows up as a regular POLLIN event in our regular processing loop.
+                        //在尝试从processOneCommand读取套接字的远端之前，我们不知道套接字的远端是否已关闭。 这在我们的常规处理循环中显示为常规的POLLIN事件
                         if (connection.isClosedByPeer()) {
                             connection.closeSocket();
                             peers.remove(i);

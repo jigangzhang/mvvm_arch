@@ -69,6 +69,7 @@
             奔溃监控可使用 Bugly、阿里啄木鸟等监控平台
             
         3、卡顿优化：
+            https://www.jianshu.com/p/7e9ca2c73c97
             通过DDMS 使用Systrace（Trace.traceBegin/end的使用）、traceview定位并分析具体情况；
             或插桩、埋点等方式
         

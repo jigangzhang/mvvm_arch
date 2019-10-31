@@ -20,6 +20,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### APP进程启动流程 [进程启动流程](profile/Android/App进程启动流程.md)
 
+##### Application启动流程 [Application启动流程](profile/Android/Application启动流程.md)
+
 ##### PMS流程解析 [PackageManagerService解析]()
 
 ##### AMS流程解析 [ActivityManagerService解析]()
@@ -27,6 +29,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 ##### View绘制流程
 
 ##### service和多进程
+
+##### Binder机制
 
 ##### Java Hook
 
