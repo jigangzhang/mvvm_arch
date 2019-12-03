@@ -1,6 +1,6 @@
 ## Code Source Profile
 
-rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
+##### rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ##### Retrofit2 [网络请求流程分析](profile/Retrofit2.md)
 
@@ -16,19 +16,21 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 
 ## Android
 
+##### 音视频系列 [音视频系列]()
+
 ##### Android系统启动流程 [系统启动流程](profile/Android/Android系统启动流程.md)
 
 ##### APP进程启动流程 [进程启动流程](profile/Android/App进程启动流程.md)
 
 ##### Application启动流程 [Application启动流程](profile/Android/Application启动流程.md)
 
+##### View绘制流程 [View绘制流程](profile/Android/View绘制流程.md)
+
 ##### PMS流程解析 [PackageManagerService解析]()
 
-##### AMS流程解析 [ActivityManagerService解析]()
+##### AMS流程解析 [ActivityManagerService解析](与SystemServer进程强相关)
 
-##### View绘制流程
-
-##### service和多进程
+##### service和多进程 [两种启动方式、flag详解、两种进程、AIDL使用等]()
 
 ##### Binder机制
 
@@ -59,6 +61,8 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 ##### [JNI语法规则](profile/NDK/JNI语法.md)
 
 ##### [Native Hook]()
+
+##### [音视频系列]()
 
 ## 设计模式
 
@@ -127,3 +131,19 @@ rxJava [使用参考](https://www.jianshu.com/p/9561ebdc5c0b)
 ##### Linux [常用命令](profile/linux_command.md)
 
 ## Java Web 
+
+##### SpringMVC
+
+##### Hirbernate
+
+##### MyBatis
+
+## 数据结构与算法
+
+##### 队列
+
+##### 栈
+
+##### 树
+
+##### 图

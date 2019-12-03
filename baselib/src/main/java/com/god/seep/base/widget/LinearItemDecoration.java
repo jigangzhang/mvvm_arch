@@ -89,7 +89,7 @@ public class LinearItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         final int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++) {
+        for (int i = 0; i < childCount - 1; i++) {        // //当前屏幕内的view，不画最后一条divider
             final View child = parent.getChildAt(i);
             parent.getDecoratedBoundsWithMargins(child, mBounds);
             final int bottom = mBounds.bottom + Math.round(ViewCompat.getTranslationY(child));
@@ -119,7 +119,7 @@ public class LinearItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         final int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++) {
+        for (int i = 0; i < childCount - 1; i++) {
             final View child = parent.getChildAt(i);
             parent.getLayoutManager().getDecoratedBoundsWithMargins(child, mBounds);
             final int right = mBounds.right + Math.round(ViewCompat.getTranslationX(child));
@@ -133,10 +133,18 @@ public class LinearItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                RecyclerView.State state) {
+        int position = parent.getChildAdapterPosition(view);    //当前View的位置
+        int last = state.getItemCount() - 1;    //最后一个Item的位置
         if (mOrientation == VERTICAL) {
-            outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
+            if (position == last)
+                outRect.set(0, 0, 0, 0);    //去掉最后一条 divider，即使在上面不画最后一条divider，但在这里也会占位，应该去掉占位
+            else
+                outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
         } else {
-            outRect.set(0, 0, mDivider.getIntrinsicWidth(), 0);
+            if (position == last)
+                outRect.set(0, 0, 0, 0);
+            else
+                outRect.set(0, 0, mDivider.getIntrinsicWidth(), 0);
         }
     }
 }

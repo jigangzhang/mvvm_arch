@@ -1,0 +1,123 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- application theme. -->
+    <!--启用 windowIsTranslucent=true 后，Animation.Activity失效， 改用Animation.Translucent-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/activityAnim.normal</item>
+        <item name="android:listDivider">@drawable/list_divider</item>
+        <item name="android:configChanges">navigation</item>
+    </style>
+
+    <style name="startTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+    <!--主题用于底部进出动画-->
+    <style name="bottomAnimTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/positionActivityAnim</item>
+    </style>
+
+    <style name="activityAnim.normal" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/anim_slide_enter_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_slide_exit_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/anim_slide_enter_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/anim_slide_exit_right</item>
+    </style>
+
+    <style name="activityAnim" parent="@android:style/Animation.Translucent">
+        <item name="android:windowEnterAnimation">@anim/anim_slide_enter_right</item>
+        <item name="android:windowExitAnimation">@anim/anim_slide_exit_right</item>
+    </style>
+
+    <style name="positionActivityAnim" parent="@android:style/Animation.Translucent">
+        <item name="android:windowEnterAnimation">@anim/anim_enter_bottom</item>
+        <item name="android:windowExitAnimation">@anim/anim_exit_bottom</item>
+    </style>
+
+    <style name="MainTextStyle">
+        <item name="android:textColor">@color/gray_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:drawablePadding">6dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="CheckBoxStyle" parent="Base.Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/btn_checkbox</item>
+        <item name="android:drawablePadding">13dp</item>
+    </style>
+
+    <style name="TabTextStyle">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="loading_dialog_style" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowFrame">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/bg_loading_dialog</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
+    <style name="rating_bar_style" parent="Base.Widget.AppCompat.RatingBar">
+        <item name="android:progressDrawable">@drawable/layer_rating_bar</item>
+        <item name="android:indeterminateDrawable">@drawable/layer_rating_bar</item>
+        <item name="android:isIndicator">true</item>
+        <item name="android:minHeight">12dp</item>
+        <item name="android:numStars">5</item>
+        <item name="android:stepSize">0.01</item>
+    </style>
+
+    <style name="big_rating_bar_style" parent="Base.Widget.AppCompat.RatingBar">
+        <item name="android:progressDrawable">@drawable/layer_rating_bar_big</item>
+        <item name="android:indeterminateDrawable">@drawable/layer_rating_bar_big</item>
+        <item name="android:isIndicator">true</item>
+        <item name="android:minHeight">20dp</item>
+        <item name="android:maxHeight">20dp</item>
+        <item name="android:numStars">5</item>
+        <item name="android:stepSize">1</item>
+    </style>
+
+    <!-- 时间选择器popwidnow 显示消失动画 -->
+    <style name="timepopwindow_anim_style">
+        <item name="android:windowEnterAnimation">@anim/timepicker_anim_enter_bottom</item>
+        <!-- 指定显示的动画xml -->
+        <item name="android:windowExitAnimation">@anim/timepicker_anim_exit_bottom</item>
+        <!-- 指定消失的动画xml -->
+    </style>
+
+    <style name="dialog_common_style" parent="Base.Theme.AppCompat.Light.Dialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
+    <style name="dialog_bottom_style" parent="dialog_common_style">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowAnimationStyle">@style/timepopwindow_anim_style</item>
+    </style>
+
+    <!--验证码text属性-->
+    <style name="verify_style">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/black_1b</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

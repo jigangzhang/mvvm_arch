@@ -116,4 +116,13 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="PageIndicatorView">
+        <attr name="pageItemSize" format="integer" />
+        <attr name="indicator_margin" format="dimension" />
+        <attr name="indicator_width" format="dimension" />
+        <attr name="indicator_height" format="dimension" />
+        <attr name="out_indicator_width" format="dimension" />
+        <attr name="indicatorNormalColor" format="color" />
+        <attr name="indicatorSelectedColor" format="color" />
+    </declare-styleable>
 </resources>
