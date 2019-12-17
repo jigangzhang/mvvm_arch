@@ -1,5 +1,7 @@
 package com.god.seep.base.net;
 
+import android.text.TextUtils;
+
 import com.god.seep.base.arch.model.datasource.HttpState;
 
 import java.io.IOException;
@@ -27,9 +29,11 @@ import timber.log.Timber;
  */
 public class BaseObserver<T> extends ResourceObserver<T> {
     private MutableLiveData<HttpState> httpState;
+    private boolean showLoading;
 
-    public BaseObserver(MutableLiveData<HttpState> httpState) {
+    public BaseObserver(MutableLiveData<HttpState> httpState, boolean showLoading) {
         this.httpState = httpState;
+        this.showLoading = showLoading;
     }
 
     @Override
@@ -40,7 +44,8 @@ public class BaseObserver<T> extends ResourceObserver<T> {
     @Override
     protected void onStart() {
         super.onStart();
-        //showLoading
+        if (showLoading)
+            httpState.postValue(HttpState.OnLoading);
     }
 
     /**
@@ -50,9 +55,13 @@ public class BaseObserver<T> extends ResourceObserver<T> {
     public void onError(Throwable e) {
         httpState.postValue(HttpState.Failure);
         Timber.e(e);
-        if (e instanceof IOException)
+        if (e instanceof IOException) {
+//            if (TextUtils.equals(e.getMessage(), "Canceled")) return;
+//            if (TextUtils.equals(e.getMessage(), "Socket closed")) return;
+//            if (TextUtils.equals(e.getMessage(), "stream was reset: CANCEL")) return;
+            Timber.e(e, "IO 错误，error message：%s", e.getMessage());
             httpState.postValue(HttpState.NetError);
-        else if (e instanceof HttpException) {
+        } else if (e instanceof HttpException) {
             int code = ((HttpException) e).code();
             if (code == 401) {
                 Timber.e("401 authentication");
@@ -61,9 +70,11 @@ public class BaseObserver<T> extends ResourceObserver<T> {
             } else if (code >= 500 && code < 600) {
                 httpState.postValue(HttpState.ServerError);
             } else {
-                Timber.e(e, "code = %s", code);
+                httpState.postValue(HttpState.UnexpectedError);
             }
+            Timber.e(e, "http code = %s，error message：%s", code, e.getMessage());
         } else {
+            httpState.postValue(HttpState.UnexpectedError);
             Timber.e(e, "未知错误");
         }
         onComplete();
@@ -71,6 +82,7 @@ public class BaseObserver<T> extends ResourceObserver<T> {
 
     @Override
     public void onComplete() {
-        //hideLoading
+        if (showLoading)
+            httpState.postValue(HttpState.OnLoadComplete);
     }
 }

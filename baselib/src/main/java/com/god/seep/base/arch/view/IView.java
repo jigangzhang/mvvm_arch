@@ -28,6 +28,11 @@ public interface IView<VM extends BaseViewModel> {
     void initData();
 
     /**
+     * 登录失效
+     */
+    void loginInvalid(String errCode);
+
+    /**
      * 是否注册 EventBus
      */
     boolean isBusEnabled();

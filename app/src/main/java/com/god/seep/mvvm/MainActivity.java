@@ -2,7 +2,6 @@ package com.god.seep.mvvm;
 
 import com.god.seep.base.adapter.BaseRecyclerViewAdapter;
 import com.god.seep.base.arch.view.BaseActivity;
-import com.god.seep.base.arch.viewmodel.BaseViewModel;
 import com.god.seep.mvvm.databinding.ActivityMainBinding;
 import com.god.seep.mvvm.databinding.ItemChapterBinding;
 
@@ -13,7 +12,7 @@ import java.util.List;
 
 import androidx.lifecycle.Observer;
 
-public class MainActivity extends BaseActivity<ActivityMainBinding, BaseViewModel> {
+public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewModel> {
 
     @Override
     public int getLayoutId() {
@@ -21,7 +20,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, BaseViewMode
     }
 
     @Override
-    public BaseViewModel createViewModel() {
+    public MainViewModel createViewModel() {
         return new MainViewModel(this.getApplication());
     }
 
@@ -34,10 +33,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, BaseViewMode
 
     @Override
     public void initData() {
-        mBinding.setViewModel((MainViewModel) mViewModel);
+        mBinding.setViewModel(mViewModel);
         setSupportActionBar(mBinding.toolbar);
         mBinding.list.setAdapter(adapter);
-        ((MainViewModel) mViewModel).getChapterListEvent().observe(this, new Observer<List<Chapter>>() {
+        mViewModel.getChapterListEvent().observe(this, new Observer<List<Chapter>>() {
             @Override
             public void onChanged(List<Chapter> chapters) {
                 adapter.addData(chapters);

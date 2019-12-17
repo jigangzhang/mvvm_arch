@@ -9,7 +9,7 @@
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/activityAnim.normal</item>
-        <item name="android:listDivider">@drawable/list_divider</item>
+        <!--<item name="android:listDivider">@drawable/list_divider</item>-->
         <item name="android:configChanges">navigation</item>
     </style>
 
@@ -52,7 +52,7 @@
     </style>
 
     <style name="CheckBoxStyle" parent="Base.Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/btn_checkbox</item>
+        <!--<item name="android:button">@drawable/btn_checkbox</item>-->
         <item name="android:drawablePadding">13dp</item>
     </style>
 
@@ -64,15 +64,15 @@
         <item name="android:windowFrame">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@drawable/bg_loading_dialog</item>
+        <!--<item name="android:windowBackground">@drawable/bg_loading_dialog</item>-->
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowCloseOnTouchOutside">false</item>
         <item name="android:windowFullscreen">false</item>
     </style>
 
     <style name="rating_bar_style" parent="Base.Widget.AppCompat.RatingBar">
-        <item name="android:progressDrawable">@drawable/layer_rating_bar</item>
-        <item name="android:indeterminateDrawable">@drawable/layer_rating_bar</item>
+        <!--<item name="android:progressDrawable">@drawable/layer_rating_bar</item>-->
+        <!--<item name="android:indeterminateDrawable">@drawable/layer_rating_bar</item>-->
         <item name="android:isIndicator">true</item>
         <item name="android:minHeight">12dp</item>
         <item name="android:numStars">5</item>
@@ -80,8 +80,8 @@
     </style>
 
     <style name="big_rating_bar_style" parent="Base.Widget.AppCompat.RatingBar">
-        <item name="android:progressDrawable">@drawable/layer_rating_bar_big</item>
-        <item name="android:indeterminateDrawable">@drawable/layer_rating_bar_big</item>
+        <!--<item name="android:progressDrawable">@drawable/layer_rating_bar_big</item>-->
+        <!--<item name="android:indeterminateDrawable">@drawable/layer_rating_bar_big</item>-->
         <item name="android:isIndicator">true</item>
         <item name="android:minHeight">20dp</item>
         <item name="android:maxHeight">20dp</item>

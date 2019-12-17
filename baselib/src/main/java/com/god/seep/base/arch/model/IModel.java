@@ -16,5 +16,5 @@ public interface IModel extends LifecycleObserver {
      * 生命周期结束时回收资源，如：置空操作、网络IO操作取消等
      */
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    void onDestroy();
+    void onDestroy();  //去掉Model层
 }

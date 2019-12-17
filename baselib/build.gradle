@@ -45,6 +45,7 @@ dependencies {
     api libs.recyclerview_helper
 
     api libs.timber
+    api libs.logger
 
     api libs.retrofit
     api libs.retrofit_gson
@@ -64,7 +65,6 @@ dependencies {
     implementation libs.multidex
 
     debugApi libs.leakcanary_debug
-    releaseApi libs.leakcanary_release
 
     testImplementation tests.junit
     androidTestImplementation tests.runner

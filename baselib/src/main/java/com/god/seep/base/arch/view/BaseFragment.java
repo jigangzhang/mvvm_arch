@@ -6,23 +6,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.god.seep.base.arch.model.datasource.HttpState;
 import com.god.seep.base.arch.viewmodel.BaseViewModel;
+import com.god.seep.base.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+/**
+ * 同BaseActivity的处理，暂缺：网络状态变化的处理、初始化请求数据的空白页面的统一处理、是否需要注册EventBus等
+ */
 public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseViewModel> extends Fragment implements IView<VM> {
     protected D mBinding;
     protected VM mViewModel;
-    protected View mRootView;
+    protected Context mContext;
+    private View mRootView;
 
     /**
      * /**生命周期： setUserVisibleHint -> onCreate -> onCreateView -> setUserVisibleHint
@@ -45,15 +48,11 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
 
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(getLayoutId(), container, false);
+        mContext = mRootView.getContext();
         mBinding = DataBindingUtil.bind(mRootView);
         initViewModel();
         return mRootView;
@@ -76,22 +75,53 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
     }
 
     private void registerEvent() {
-        mViewModel.getLoadingEvent().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean showLoading) {
-                if (showLoading) {
-                    showLoading();
-                } else {
-                    hideLoading();
+        mViewModel.getLoadingEvent().observe(this, showLoading -> {
+                    if (showLoading) {
+                        showLoading();
+                    } else {
+                        hideLoading();
+                    }
                 }
+        );
+        mViewModel.getHttpState().observe(this, httpState -> {
+            switch (httpState) {
+                case OnLoading:
+                    showLoading();
+                    break;
+                case OnLoadComplete:
+                    hideLoading();
+                    break;
+                case Success:
+                    break;
+                case LoginInvalid:
+                    loginInvalid(null);
+                    break;
+                case Failure:       //Failure包括：接口请求成功，但是返回false；接口请求失败--包括以下情况
+                    break;
+                case NetError:
+                    ToastHelper.showToast(mContext, "网络错误");
+                    break;
+                case ClientError:
+                    ToastHelper.showToast(mContext, "client error");
+                    break;
+                case ServerError:
+                    ToastHelper.showToast(mContext, "服务器错误");
+                    break;
+                case UnexpectedError:
+                    ToastHelper.showToast(mContext, "未知错误");
+                    break;
             }
         });
-        mViewModel.getHttpState().observe(this, new Observer<HttpState>() {
-            @Override
-            public void onChanged(HttpState state) {
+    }
 
-            }
-        });
+    @Override
+    public void loginInvalid(String errCode) {
+
+    }
+
+    @Override
+    public boolean isBusEnabled() {
+        return false;
     }
 
     protected void showLoading() {
@@ -124,6 +154,8 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
             getLifecycle().removeObserver(mViewModel);
             mViewModel = null;
         }
+        hideLoading();
         mRootView = null;
+        mContext = null;
     }
 }

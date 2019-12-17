@@ -24,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--<service android:name="" android:externalService="true" android:isolatedProcess="true"/>  为true则可以绑定并在调用应用程序的包中运行，而不是在声明它的包中运行-->
     </application>
 
 </manifest>

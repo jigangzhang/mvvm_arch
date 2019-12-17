@@ -12,14 +12,17 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+import io.reactivex.Observable;
 import timber.log.Timber;
 
-public class MainViewModel extends BaseViewModel<MainModel> {
-    //可将LiveData 传至 Model，直接在 Model 层通知数据获取结果？？
+public class MainViewModel extends BaseViewModel {
     private MutableLiveData<List<Chapter>> chapterListEvent = new MutableLiveData<>();
+    private MainRepository mainRepo;
 
     public MainViewModel(@NonNull Application application) {
-        super(application, new MainModel());
+        super(application);
+        mainRepo = new MainRepository(httpState);
+        addRepository(mainRepo);
     }
 
     public MutableLiveData<List<Chapter>> getChapterListEvent() {
@@ -34,15 +37,14 @@ public class MainViewModel extends BaseViewModel<MainModel> {
 
     public void getChapters() {
         showLoading();
-        mModel.getChapters(new BaseObserver<NetResource<List<Chapter>>>(httpState) {
-            @Override
-            public void onNext(NetResource<List<Chapter>> listNetResource) {
-                super.onNext(listNetResource);
-                chapterListEvent.setValue(listNetResource.getData());
-                Timber.e("result -- " + listNetResource);
-                hideLoading();
-            }
-        });
+        Observable<NetResource<List<Chapter>>> observable =
+                mainRepo
+                        .getChapters()
+                        .doOnNext((list) -> {
+                            chapterListEvent.setValue(list.getData());
+                            Timber.e("result -- %s", list);
+                            hideLoading();
+                        });
     }
 
     public void show(View view) {
