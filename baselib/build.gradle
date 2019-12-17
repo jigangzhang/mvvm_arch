@@ -54,6 +54,7 @@ dependencies {
 
     api libs.rxjava
     api libs.rxandroid
+    api libs.eventbus
 
     api libs.glide
     annotationProcessor libs.glide_compiler

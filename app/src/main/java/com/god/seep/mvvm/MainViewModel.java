@@ -5,7 +5,6 @@ import android.view.View;
 
 import com.god.seep.base.arch.model.datasource.NetResource;
 import com.god.seep.base.arch.viewmodel.BaseViewModel;
-import com.god.seep.base.net.BaseObserver;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
