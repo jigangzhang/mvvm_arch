@@ -34,6 +34,10 @@ ext {
             timber                : [group: 'com.jakewharton.timber', name: 'timber', version: '4.7.1'],
             logger                : [group: 'com.orhanobut', name: 'logger', version: '2.2.0'],
 
+            //##bugly##
+            bugly_sdk             : [group: 'com.tencent.bugly', name: 'crashreport', version: 'latest.release'],
+            bugly_ndk             : [group: 'com.tencent.bugly', name: 'nativecrashreport', version: 'latest.release'],
+
             component_extension   : [group: 'androidx.lifecycle', name: 'lifecycle-extensions', version: versions.arch_component],
             component_java8       : [group: 'androidx.lifecycle', name: 'lifecycle-common-java8', version: versions.arch_component],
             component_rx_liveData : [group: 'androidx.lifecycle', name: 'lifecycle-reactivestreams', version: versions.arch_component],

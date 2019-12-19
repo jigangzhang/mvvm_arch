@@ -11,8 +11,14 @@ android {
 
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        ndk {
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'    // 设置支持的SO库架构
+        }
     }
+
+//    multiDexKeepFile {
+//
+//    }
 
     buildTypes {
         release {
@@ -46,6 +52,9 @@ dependencies {
 
     api libs.timber
     api libs.logger
+
+    api libs.bugly_sdk
+    api libs.bugly_ndk
 
     api libs.retrofit
     api libs.retrofit_gson

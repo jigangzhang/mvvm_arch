@@ -48,6 +48,7 @@ public class HttpManager {
 
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor((String message) -> {
+                Timber.tag("http");
                 Timber.e(message);
             });
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);

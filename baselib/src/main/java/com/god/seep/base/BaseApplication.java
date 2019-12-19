@@ -9,6 +9,7 @@ import com.god.seep.base.util.AppUtil;
 import com.god.seep.base.util.ExceptionCaught;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +31,7 @@ public class BaseApplication extends MultiDexApplication {
             Stetho.initializeWithDefaults(this);
         } else {
             ExceptionCaught.getInstance(this).init();   //是否要发布到线上版本，接入 Bugly 后可以不需要此项
+//            CrashReport.initCrashReport(this, "AppId", false);
         }
     }
 
