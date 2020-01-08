@@ -11,6 +11,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * ViewModel 处理业务数据， 一个 ViewModel 持有多个数据源
@@ -27,6 +29,7 @@ public class BaseViewModel extends AndroidViewModel implements IViewModel {
     private MutableLiveData<Boolean> loadingEvent = new MutableLiveData<>();
     protected MutableLiveData<HttpState> httpState = new MutableLiveData<>();
     private List<IRepository> repositories;
+    private CompositeDisposable compositeDisposable;
 
     public BaseViewModel(@NonNull Application application) {
         this(application, null);
@@ -86,6 +89,10 @@ public class BaseViewModel extends AndroidViewModel implements IViewModel {
             for (IRepository repo : repositories) {
                 repo.onDestroy();
             }
+        if (compositeDisposable != null) {
+            compositeDisposable.clear();
+            compositeDisposable = null;
+        }
     }
 
     @Override
@@ -99,6 +106,19 @@ public class BaseViewModel extends AndroidViewModel implements IViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+    }
+
+    @Override
+    public void addDisposable(Disposable disposable) {
+        if (compositeDisposable == null)
+            compositeDisposable = new CompositeDisposable();
+        compositeDisposable.add(disposable);
+    }
+
+    @Override
+    public void removeDisposable(Disposable disposable) {
+        if (compositeDisposable != null)
+            compositeDisposable.remove(disposable);
     }
 
     protected void showLoading() {

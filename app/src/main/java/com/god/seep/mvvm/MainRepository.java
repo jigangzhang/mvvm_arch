@@ -9,6 +9,9 @@ import java.util.List;
 
 import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class MainRepository extends BaseRemoteRepo {
 
@@ -17,10 +20,16 @@ public class MainRepository extends BaseRemoteRepo {
     }
 
     public Observable<NetResource<List<Chapter>>> getChapters() {
-        Observable execute = execute(getWebService(WebService.class, Api.Url_WanAndroid)
-                .getChapters(), true);
-        return execute;
-//        return getWebService(WebService.class, Api.Url_WanAndroid)
-//                .getChapters();
+//        Observable execute = execute(getWebService(WebService.class, Api.Url_WanAndroid)
+//                .getChapters(), true);
+//        return execute;
+        Observable<NetResource<List<Chapter>>> observable = getWebService(WebService.class, Api.Url_WanAndroid)
+                .getChapters()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(result -> {
+                    Timber.e("do next in repo");
+                });
+        return observable;
     }
 }

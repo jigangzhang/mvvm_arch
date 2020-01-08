@@ -15,49 +15,29 @@ import timber.log.Timber;
 
 public class BaseRemoteRepo implements IRepository.IRemoteRepository {
     private MutableLiveData<HttpState> httpState;
-    private CompositeDisposable compositeDisposable;
 
     public BaseRemoteRepo(MutableLiveData<HttpState> httpState) {
         this.httpState = httpState;
     }
 
-    public LiveData<HttpState> getHttpState() {
+    public MutableLiveData<HttpState> getHttpState() {
         return httpState;
     }
 
     protected <T> Observable execute(Observable observable, boolean showLoading) {
         //showLoading
-        Observable observe = observable
+        return observable
 //                .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-        Observer observer = observe.doFinally(() -> {
-            //hideLoading
-        })
-//                .compose()
-                .subscribeWith(new BaseObserver<T>(httpState, showLoading));
-        addDisposable((Disposable) observer);
-        return observe;
-    }
-
-    protected void addDisposable(Disposable disposable) {
-        if (compositeDisposable == null)
-            compositeDisposable = new CompositeDisposable();
-        compositeDisposable.add(disposable);
-    }
-
-    protected void removeDisposable(Disposable disposable) {
-        if (compositeDisposable != null)
-            compositeDisposable.remove(disposable);
+//                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(result -> {
+                    Timber.e("result--- %s", result.toString());
+                });
     }
 
     @Override
     public void onDestroy() {
         Timber.e("Repository destroy");
-        if (compositeDisposable != null) {
-            compositeDisposable.clear();
-            compositeDisposable = null;
-        }
     }
 }

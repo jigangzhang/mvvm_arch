@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.god.seep.base.arch.model.datasource.NetResource;
 import com.god.seep.base.arch.viewmodel.BaseViewModel;
+import com.god.seep.base.net.BaseObserver;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -35,15 +36,18 @@ public class MainViewModel extends BaseViewModel {
     }
 
     public void getChapters() {
-        showLoading();
-        Observable<NetResource<List<Chapter>>> observable =
-                mainRepo
-                        .getChapters()
-                        .doOnNext((list) -> {
-                            chapterListEvent.setValue(list.getData());
-                            Timber.e("result -- %s", list);
-                            hideLoading();
-                        });
+        BaseObserver<NetResource<List<Chapter>>> subscribe = mainRepo
+                .getChapters()
+                .subscribeWith(new BaseObserver<NetResource<List<Chapter>>>(getHttpState(), true) {
+                    @Override
+                    public void onNext(NetResource<List<Chapter>> list) {
+                        super.onNext(list);
+                        chapterListEvent.setValue(list.getData());
+                        Timber.e("result -- %s", list);
+                    }
+                });
+        addDisposable(subscribe);
+
     }
 
     public void show(View view) {

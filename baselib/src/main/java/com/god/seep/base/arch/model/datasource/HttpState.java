@@ -3,38 +3,76 @@ package com.god.seep.base.arch.model.datasource;
 /**
  * 网络状态相关
  */
-public enum HttpState {
+public class HttpState {
+    public enum State {
 
-    /**
-     * 开始加载：展示loading
-     */
-    OnLoading,
+        /**
+         * 开始加载：展示loading
+         */
+        OnLoading,
 
-    /**
-     * 加载完毕：隐藏loading
-     */
-    OnLoadComplete,
+        /**
+         * 加载完毕：隐藏loading
+         */
+        OnLoadComplete,
 
-    /**
-     * 仅仅只是网络请求成功
-     */
-    Success,
+        /**
+         * 仅仅只是接口请求成功，接口请求成功包括：接口返回false--无数据等，登录失效
+         */
+        Success,
 
-    /**
-     * 登录失效，需要重新登录
-     */
-    LoginInvalid,
+        /**
+         * 登录失效，需要重新登录
+         */
+        LoginInvalid,
 
-    /**
-     * 网络请求失败，包含以下错误之一
-     */
-    Failure,
+        /**
+         * 接口请求失败，包括：网络请求失败等，包含以下错误之一
+         */
+        Failed,
 
-    NetError,
+        NetError,
 
-    ClientError,
+        ClientError,
 
-    ServerError,
+        ServerError,
 
-    UnexpectedError,
+        UnexpectedError,
+    }
+
+    private State state;
+    private String msg;
+
+    public HttpState(State state, String msg) {
+        this.state = state;
+        this.msg = msg;
+    }
+
+    public static HttpState LOADING = new HttpState(State.OnLoading, null);     //数据加载中
+    public static HttpState LOADCOMPLETE = new HttpState(State.OnLoadComplete, null);   //数据加载完毕，包括请求失败
+    public static HttpState SUCCESS = new HttpState(State.Success, null);   //接口请求成功
+
+    public static HttpState error(String errorMsg) {
+        return error(State.Failed, errorMsg);
+    }
+
+    public static HttpState error(State state, String errorMsg) {
+        return new HttpState(state, errorMsg);
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public String getMsg() {
+        return msg == null ? "" : msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 }

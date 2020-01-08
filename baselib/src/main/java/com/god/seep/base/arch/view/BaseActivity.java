@@ -73,7 +73,7 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
             }
         });
         mViewModel.getHttpState().observe(this, httpState -> {
-            switch (httpState) {
+            switch (httpState.getState()) {
                 case OnLoading:
                     showLoading();
                     break;
@@ -85,7 +85,7 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
                 case LoginInvalid:
                     loginInvalid(null);
                     break;
-                case Failure:   //Failure包括：接口请求成功，但是返回false；接口请求失败--包括以下情况
+                case Failed:   //Failure包括：接口请求成功，但是返回false；接口请求失败--包括以下情况
                     break;
                 case NetError:
                     ToastHelper.showToast(BaseActivity.this, "网络错误");
@@ -100,7 +100,7 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
                     ToastHelper.showToast(BaseActivity.this, "未知错误");
                     break;
             }
-            Timber.e("net state -- %s", httpState.ordinal());
+            Timber.e("net state -- %s", httpState.getState());
         });
     }
 

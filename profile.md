@@ -30,9 +30,9 @@
 
 ##### AMS流程解析 [ActivityManagerService解析](与SystemServer进程强相关)
 
-##### service和多进程 [两种启动方式、flag详解、两种进程、AIDL使用等](Service和多进程.md)
+##### service和多进程 [Service启动流程](profile/Android/Service和多进程.md)
 
-##### Binder机制
+##### AIDL、Binder机制
 
 ##### Java Hook
 
@@ -136,7 +136,7 @@
 
 ##### SpringMVC
 
-##### Hirbernate
+##### Hibernate
 
 ##### MyBatis
 

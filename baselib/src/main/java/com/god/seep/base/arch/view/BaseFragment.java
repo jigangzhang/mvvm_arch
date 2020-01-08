@@ -84,7 +84,7 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
                 }
         );
         mViewModel.getHttpState().observe(this, httpState -> {
-            switch (httpState) {
+            switch (httpState.getState()) {
                 case OnLoading:
                     showLoading();
                     break;
@@ -96,7 +96,7 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
                 case LoginInvalid:
                     loginInvalid(null);
                     break;
-                case Failure:       //Failure包括：接口请求成功，但是返回false；接口请求失败--包括以下情况
+                case Failed:       //Failure包括：接口请求成功，但是返回false；接口请求失败--包括以下情况
                     break;
                 case NetError:
                     ToastHelper.showToast(mContext, "网络错误");

@@ -1,7 +1,5 @@
 package com.god.seep.base.net;
 
-import android.text.TextUtils;
-
 import com.god.seep.base.arch.model.datasource.HttpState;
 
 import java.io.IOException;
@@ -26,6 +24,9 @@ import timber.log.Timber;
  * <p>
  * cancel 后不会触发 onNext onError onComplete 等
  * 暂只考虑了 Direct body 情况
+ * <p>
+ * 必须放在UI线程执行
+ * </p>
  */
 public class BaseObserver<T> extends ResourceObserver<T> {
     private MutableLiveData<HttpState> httpState;
@@ -38,14 +39,14 @@ public class BaseObserver<T> extends ResourceObserver<T> {
 
     @Override
     public void onNext(T t) {
-        httpState.postValue(HttpState.Success);
+        httpState.setValue(HttpState.SUCCESS);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if (showLoading)
-            httpState.postValue(HttpState.OnLoading);
+            httpState.setValue(HttpState.LOADING);
     }
 
     /**
@@ -53,28 +54,27 @@ public class BaseObserver<T> extends ResourceObserver<T> {
      */
     @Override
     public void onError(Throwable e) {
-        httpState.postValue(HttpState.Failure);
-        Timber.e(e);
+        httpState.setValue(HttpState.error(e.getMessage()));
         if (e instanceof IOException) {
 //            if (TextUtils.equals(e.getMessage(), "Canceled")) return;
 //            if (TextUtils.equals(e.getMessage(), "Socket closed")) return;
 //            if (TextUtils.equals(e.getMessage(), "stream was reset: CANCEL")) return;
+            httpState.setValue(HttpState.error(HttpState.State.NetError, e.getMessage()));
             Timber.e(e, "IO 错误，error message：%s", e.getMessage());
-            httpState.postValue(HttpState.NetError);
         } else if (e instanceof HttpException) {
             int code = ((HttpException) e).code();
             if (code == 401) {
                 Timber.e("401 authentication");
             } else if (code >= 400 && code < 500) {
-                httpState.postValue(HttpState.ClientError);
+                httpState.setValue(HttpState.error(HttpState.State.ClientError, e.getMessage()));
             } else if (code >= 500 && code < 600) {
-                httpState.postValue(HttpState.ServerError);
+                httpState.setValue(HttpState.error(HttpState.State.ServerError, e.getMessage()));
             } else {
-                httpState.postValue(HttpState.UnexpectedError);
+                httpState.setValue(HttpState.error(HttpState.State.UnexpectedError, e.getMessage()));
             }
             Timber.e(e, "http code = %s，error message：%s", code, e.getMessage());
         } else {
-            httpState.postValue(HttpState.UnexpectedError);
+            httpState.setValue(HttpState.error(HttpState.State.UnexpectedError, e.getMessage()));
             Timber.e(e, "未知错误");
         }
         onComplete();
@@ -83,6 +83,6 @@ public class BaseObserver<T> extends ResourceObserver<T> {
     @Override
     public void onComplete() {
         if (showLoading)
-            httpState.postValue(HttpState.OnLoadComplete);
+            httpState.setValue(HttpState.LOADCOMPLETE);
     }
 }

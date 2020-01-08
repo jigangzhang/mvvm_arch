@@ -13,6 +13,7 @@ ext {
             constraintlayout   : '1.1.3',
             material           : '1.0.0-rc01',
             arch_component     : '2.0.0',
+            room_version       : '2.2.0-rc01',
             recyclerview       : '1.0.0',
             recyclerview_helper: '2.9.45-androidx',
             retrofit           : '2.4.0',
@@ -41,6 +42,14 @@ ext {
             component_extension   : [group: 'androidx.lifecycle', name: 'lifecycle-extensions', version: versions.arch_component],
             component_java8       : [group: 'androidx.lifecycle', name: 'lifecycle-common-java8', version: versions.arch_component],
             component_rx_liveData : [group: 'androidx.lifecycle', name: 'lifecycle-reactivestreams', version: versions.arch_component],
+
+            room                  : [group: 'androidx.room', name: 'room-runtime', version: versions.room_version],
+            //annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+            room_compiler         : [group: 'androidx.room', name: 'room-compiler', version: versions.room_version],
+            // optional - RxJava support for Room
+            room_rxjava2          : [group: 'androidx.room', name: 'room-rxjava2', version: versions.room_version],
+            // Test helpers
+            room_testing          : [group: 'androidx.room', name: 'room-testing', version: versions.room_version],
 
             pinned                : [group: 'com.oushangfeng', name: 'PinnedSectionItemDecoration', version: '1.3.0'],
             recyclerview          : [group: 'androidx.recyclerview', name: 'recyclerview', version: versions.recyclerview],
