@@ -39,6 +39,43 @@
     bindService时的Service生命周期：
         attach --> onCreate --> onBind/onRebind --> onUnbind --> onDestroy --> detachAndCleanUp
     
+    bindService(Intent service, ServiceConnection conn, int flags)的flags有：
+        BIND_AUTO_CREATE：
+            只要绑定存在，就自动创建Service。注意，虽然这将创建Service，
+            但onStartCommand(Intent,int,int)方法仍然只会在对startService(Intent)的显式调用后才会被调用。
+            但是，即使没有它，在创建Service后仍然可以访问Service对象。
+            注意，在ICE_CREAM_SANDWICH（14）之前，不提供此标志也会影响系统对目标Service进程的优先级。
+            在设置后，它被触发的惟一方法是从服务绑定，在这种情况下，仅当Activity处于前台时才重要。
+            现在，要实现此行为，您必须显式地提供新标记BIND_ADJUST_WITH_ACTIVITY。为了兼容性，
+            未指定BIND_AUTO_CREATE的旧应用程序将自动设置BIND_WAIVE_PRIORITY和BIND_ADJUST_WITH_ACTIVITY标志，以实现相同的目的。
+        BIND_DEBUG_UNBIND：
+            包括对不匹配的unbind调用的调试帮助。
+            设置此标志后，将保留unbindService(ServiceConnection)调用的调用堆栈，如果稍后进行了不正确的unbind调用，则打印该堆栈。
+            请注意，这样做需要保留关于绑定的信息，绑定是在应用程序的生命周期中进行的，从而导致了泄漏——这应该只用于调试
+        BIND_NOT_FOREGROUND：
+            不允许此绑定将目标Service的进程提升到前台调度优先级。
+            它仍然会被提升到至少与Client端相同的内存优先级（这样它的进程在Client端没有被杀死的任何情况下都不会被杀死），
+            但是出于CPU调度的目的，它可能会被留在后台。
+            这只在绑定Client端是前台进程而目标Service是后台进程的情况下产生影响
+        BIND_ABOVE_CLIENT：
+            表示绑定到此Service的Client端应用程序认为该Service比应用程序本身更重要。
+            设置后，平台将尝试让内存不足杀手杀死应用程序，然后再杀死它所绑定的Service，尽管不能保证确实如此
+            （the out of memory killer）
+        BIND_ALLOW_OOM_MANAGEMENT：
+            允许承载绑定Service的进程进行正常的内存管理。
+            它将被视为一个正在运行的服务，允许系统(暂时)删除进程，如果内存不足或其他突发事件，
+            它可能会这样做；如果它运行了很长一段时间，它会更积极地让它成为被杀死(和重新启动)的候选对象。
+        BIND_WAIVE_PRIORITY：
+            不要影响目标Service托管进程的调度或内存管理优先级。
+            允许在后台LRU列表中管理Service的进程，就像在后台管理常规应用程序进程一样
+        BIND_IMPORTANT：
+            此Service对Client端非常重要，因此应该在Client端处于前台进程级别时将其带到前台进程级别。
+            通常，进程只能由Client端提升到可见性级别，即使该Client端位于前台
+        BIND_ADJUST_WITH_ACTIVITY：
+            如果从某个Activity进行绑定，
+            则允许根据该Activity是否对用户可见而提高目标Service的进程重要性，
+            而不管是否使用另一个标志来减少用于影响该Client端进程的总体重要性的数量
+    
     attach、detachAndCleanUp 为内部接口（隐藏方法），不能重写。onStart已经用onStartCommand替代了
     onStartCommand的返回值（是START_CONTINUATION_MASK）有：
         START_STICKY_COMPATIBILITY：
@@ -93,6 +130,9 @@
         由系统调用，通知Service它不再被使用并且正在被删除。
         此时，Service应该清理它所持有的任何资源(线程、注册的接收者等)。
         在返回时，将不再调用此Service对象，并且它实际上已死亡。不要直接调用这个方法。
+        
+        没有以 startService 方式开启过 service，即只以 bindService 方式启动 Service时，
+        在最后一个连接断开时 （unbindService） service 也同时销毁了
     
     onBind(Intent)：
         将通信通道返回给Service。如果Client不能绑定到Service，可能返回null。
@@ -111,6 +151,7 @@
             请注意，此时在Intent中包含的任何其他内容都不会在此处显示。
     onUnbind(Intent)：
         当所有Client都与Service发布的特定接口断开连接时调用。默认实现不执行任何操作，返回false。
+        即当所有连接断开时触发
         Intent：
             Context.bindService用于绑定到此Service的Intent。
             请注意，此时在Intent中包含的任何其他内容都不会在此处显示。

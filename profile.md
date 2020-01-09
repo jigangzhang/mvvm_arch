@@ -32,7 +32,7 @@
 
 ##### service和多进程 [Service启动流程](profile/Android/Service和多进程.md)
 
-##### AIDL、Binder机制
+##### AIDL、Binder机制 [AIDL使用和Binder机制](profile/Android/AIDL使用和Binder机制.md)
 
 ##### Java Hook
 
