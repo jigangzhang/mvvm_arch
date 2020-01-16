@@ -5,6 +5,7 @@ import com.god.seep.base.arch.model.datasource.HttpState;
 import java.io.IOException;
 
 import androidx.lifecycle.MutableLiveData;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.ResourceObserver;
 import retrofit2.HttpException;
 import timber.log.Timber;
@@ -25,14 +26,16 @@ import timber.log.Timber;
  * cancel 后不会触发 onNext onError onComplete 等
  * 暂只考虑了 Direct body 情况
  * <p>
- * 必须放在UI线程执行
+ * 必须放在UI线程执行，Flowable可实现FlowableSubscriber接口使用
  * </p>
  */
 public class BaseObserver<T> extends ResourceObserver<T> {
+    private CompositeDisposable disposable;
     private MutableLiveData<HttpState> httpState;
     private boolean showLoading;
 
-    public BaseObserver(MutableLiveData<HttpState> httpState, boolean showLoading) {
+    public BaseObserver(CompositeDisposable disposable, MutableLiveData<HttpState> httpState, boolean showLoading) {
+        this.disposable = disposable;
         this.httpState = httpState;
         this.showLoading = showLoading;
     }
@@ -47,6 +50,8 @@ public class BaseObserver<T> extends ResourceObserver<T> {
         super.onStart();
         if (showLoading)
             httpState.setValue(HttpState.LOADING);
+        if (disposable != null)
+            disposable.add(this);
     }
 
     /**
@@ -84,5 +89,7 @@ public class BaseObserver<T> extends ResourceObserver<T> {
     public void onComplete() {
         if (showLoading)
             httpState.setValue(HttpState.LOADCOMPLETE);
+        if (disposable != null)
+            disposable.remove(this);
     }
 }

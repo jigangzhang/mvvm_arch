@@ -28,8 +28,8 @@ import io.reactivex.disposables.Disposable;
 public class BaseViewModel extends AndroidViewModel implements IViewModel {
     private MutableLiveData<Boolean> loadingEvent = new MutableLiveData<>();
     protected MutableLiveData<HttpState> httpState = new MutableLiveData<>();
+    protected CompositeDisposable compositeDisposable = new CompositeDisposable();
     private List<IRepository> repositories;
-    private CompositeDisposable compositeDisposable;
 
     public BaseViewModel(@NonNull Application application) {
         this(application, null);

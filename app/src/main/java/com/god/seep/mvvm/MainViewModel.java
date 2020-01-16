@@ -12,7 +12,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
-import io.reactivex.Observable;
 import timber.log.Timber;
 
 public class MainViewModel extends BaseViewModel {
@@ -38,7 +37,7 @@ public class MainViewModel extends BaseViewModel {
     public void getChapters() {
         BaseObserver<NetResource<List<Chapter>>> subscribe = mainRepo
                 .getChapters()
-                .subscribeWith(new BaseObserver<NetResource<List<Chapter>>>(getHttpState(), true) {
+                .subscribeWith(new BaseObserver<NetResource<List<Chapter>>>(compositeDisposable, getHttpState(), true) {
                     @Override
                     public void onNext(NetResource<List<Chapter>> list) {
                         super.onNext(list);
@@ -46,8 +45,6 @@ public class MainViewModel extends BaseViewModel {
                         Timber.e("result -- %s", list);
                     }
                 });
-        addDisposable(subscribe);
-
     }
 
     public void show(View view) {
