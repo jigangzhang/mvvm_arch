@@ -1,6 +1,6 @@
 ext {
     build_version = [
-            gradle           : '3.3.1',
+            gradle           : '3.6.1',
             compileSdkVersion: 28,
             minSdkVersion    : 19,
             targetSdkVersion : 28,
@@ -64,7 +64,7 @@ ext {
 
             rxjava                : [group: 'io.reactivex.rxjava2', name: 'rxjava', version: versions.rxjava],
             rxandroid             : [group: 'io.reactivex.rxjava2', name: 'rxandroid', version: versions.rxandroid],
-            rxpermission          : [group: 'com.github.tbruyelle', name: 'tbruyelle:rxpermissions', version: versions.rxpermission],
+            rxpermission          : [group: 'com.github.tbruyelle', name: 'rxpermissions', version: versions.rxpermission],
             eventbus              : [group: 'org.greenrobot', name: 'eventbus', version: '3.1.1'],
 
             glide                 : [group: 'com.github.bumptech.glide', name: 'glide', version: versions.glide],

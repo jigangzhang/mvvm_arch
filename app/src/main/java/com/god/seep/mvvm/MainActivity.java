@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import java.util.List;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewModel> {
 
@@ -21,7 +22,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     @Override
     public MainViewModel createViewModel() {
-        return new MainViewModel(this.getApplication());
+        return getViewModel(MainViewModel.class);
+//        return new MainViewModel(this.getApplication());
     }
 
     BaseRecyclerViewAdapter adapter = new BaseRecyclerViewAdapter<ItemChapterBinding, Chapter>(R.layout.item_chapter) {

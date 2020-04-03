@@ -34,7 +34,9 @@
 
 ##### AIDL、Binder机制 [AIDL使用和Binder机制](profile/Android/AIDL使用和Binder机制.md)
 
-##### Java Hook
+##### 常见问题汇集 [Android常见问题汇集]()
+
+##### Java Hook []()
 
 ##### 内存优化 [Android内存优化](profile/Android/内存优化.md)
 

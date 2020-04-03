@@ -183,7 +183,7 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
     }
 
     public <T extends ViewModel> T getViewModel(@NonNull Class<T> clz, ViewModelProvider.Factory factory) {
-        return ViewModelProviders.of(this, factory).get(clz);
+        return ViewModelProviders.of(this, factory).get(clz);   //内部调用了AndroidViewModelFactory，故不用重写factory，除非需要多个参数
     }
 
     @Override
