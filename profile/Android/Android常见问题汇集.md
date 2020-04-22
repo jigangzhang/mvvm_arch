@@ -97,3 +97,16 @@
         详见：https://developer.android.google.cn/studio/build/multidex#about
         minSdkVersion 设为 21 或更高的值，则默认情况下启用多 dex 文件，并且您不需要多 dex 文件支持库
         multiDexKeepFile、multiDexKeepProguard的使用（将特定类置于主dex中），见官方文档（上述链接）
+
+#### NDK编译
+
+    openssl编译：
+        不是首次编译的话，最好 make clean之后再重新配置执行 Configure，否则可能后出问题
+        配置prefix，make install 安装到固定位置
+        编译时使用 ./Configure android-arm64 -D__ANDROID_API__=29 no-stdio no-ui --prefix=/home/xxx/openssl/，可解决 undefined reference to 'stdin'/'stderr'问题
+    CMakeLists：
+        message()信息，可在Build/run中查看（只在第一次编译时打印）
+        若Build/run中无信息，可在 .cxx/.externalNativeBuild下的cmake/debug/${android_abi}/build_output.txt中查看
+    
+    C/C++中常见的问题：
+        打印字符串（指针）时，会打印到其他内容，就像是指针指到了临近地方

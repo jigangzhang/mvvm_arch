@@ -80,7 +80,9 @@
     ndk-gdb -- 调试
     
     ndk-stack -- 堆栈跟踪分析
-        adb logcat | ndk-stack -sym obj/local/x86 (logcat打印堆栈跟踪)
+        adb logcat | ndk-stack -sym obj/local/armeabi (logcat打印堆栈跟踪)
+        eg：ndk-stack -sym app/build/intermediates/cmake/debug/obj/armeabi-v7a -dump ./log.txt
+        eg：adb logcat | ndk-stack -sym encryption/build/intermediates/cmake/debug/obj/armeabi-v7a，亲测可用
     
     CheckJNI(对JNI的扩展检查):
         adb shell setprop debug.checkjni 1
