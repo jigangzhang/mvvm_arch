@@ -3,6 +3,13 @@
 
     常见问题汇集
     View相关问题
+
+#### 问题解决思路
+
+    ScrollView/RecyclerView等使用smoothScrollBy等相关方法时滑动未生效：
+        检查输入参数是否有效；
+        检查滑动的同时是否有触发measure、layout等的操作，如：设置margin等；
+        检查是否有禁止滑动的设置，如：重写scrollVerticallyBy、canScrollVertically等；
     
 #### View相关
     
@@ -98,9 +105,28 @@
         minSdkVersion 设为 21 或更高的值，则默认情况下启用多 dex 文件，并且您不需要多 dex 文件支持库
         multiDexKeepFile、multiDexKeepProguard的使用（将特定类置于主dex中），见官方文档（上述链接）
 
+#### Jetpack && Androidx
+
+    生命周期：
+        使用 LifecycleObserver时，一定要将其注入到某个LifecycleOwner中。
+        如Activity中使用ViewModel：getLifecycle().addObserver(mViewModel)
+    Jetpack组件使用协程：
+        https://developer.android.google.cn/topic/libraries/architecture/coroutines    
+    
+    DataBinding：
+        双向绑定的实现关键是：InverseBindingAdapter
+        参考TextViewBindingAdapter：@InverseBindingAdapter(attribute = "android:text", event = "android:textAttrChanged")
+            text、textAttrChanged 都需要使用 BindingAdapter 定义实现
+    
+    Room：
+        与LiveData一起使用时：
+            先查询，再更新数据（Update）后，更新后的结果会再次通知到LiveData
+            onPause时触发更新：不同手机有不同现象，华为手机上onPause前返回数据，oppo在onResume后返回数据
+
 #### NDK编译
 
     openssl编译：
+        linux下编译，下载最新源码，解压 编译
         不是首次编译的话，最好 make clean之后再重新配置执行 Configure，否则可能后出问题
         配置prefix，make install 安装到固定位置
         编译时使用 ./Configure android-arm64 -D__ANDROID_API__=29 no-stdio no-ui --prefix=/home/xxx/openssl/，可解决 undefined reference to 'stdin'/'stderr'问题

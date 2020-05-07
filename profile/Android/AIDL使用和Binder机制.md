@@ -3,6 +3,7 @@
 
 [参考](https://blog.csdn.net/github_37130188/article/details/89857282)
 [参考](https://www.jianshu.com/p/b5cc1ef9f917)
+[IPC通信](https://www.jianshu.com/p/7f7dd05bdde8)
     
     Binder是一种IPC（进程间通信，Inter-Process Communication）方式，也是一种RPC（远程过程调用，Remote Procedure Call）方式
     是一种实现android跨进程通讯的方式，有物理上的虚拟物理设备驱动，和Binder类组成
