@@ -120,8 +120,14 @@
     
     Room：
         与LiveData一起使用时：
-            先查询，再更新数据（Update）后，更新后的结果会再次通知到LiveData
-            onPause时触发更新：不同手机有不同现象，华为手机上onPause前返回数据，oppo在onResume后返回数据
+            先查询，再更新数据（Update）后，更新后的结果会再次通过查询通道通知到LiveData
+            onPause时触发更新：可能会在onPause前返回数据，或者在onResume后返回数据
+        查询操作返回LiveData：
+            根据源码RoomTrackingLiveData，触发onActive时，会从数据库中查询数据，并通知到LiveData（postValue）
+            即只要更新、查询、删除操作返回的LiveData对象没有被回收，触发onActive时就可能会多次收到数据
+            更新、查询、删除操作完成都会调用endTransaction，最终都会触发 RoomTrackingLiveData中的 mRefreshRunnable
+            onActive的触发条件：Activity生命周期变化等等
+            联动详细讲解：https://blog.csdn.net/weixin_34358092/article/details/91431952
 
 #### NDK编译
 

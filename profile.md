@@ -70,7 +70,7 @@
 
 ##### [OO设计原则](profile/设计模式/OO设计原则.md)
 
-##### [策略模式](profile/设计模式/设计模式.md)
+##### [策略模式](profile/设计模式/策略模式.md)
 
 ##### [观察者模式](profile/设计模式/观察者模式.md)
 
@@ -130,7 +130,13 @@
 
 ## Linux
 
-##### Linux [常用命令](profile/linux_command.md)
+##### Linux文档项目 [地址](http://www.tldp.org)
+
+##### 源码下载地址 [URL](https://www.wrox.com/go/downloadcode)
+
+##### Linux [常用命令](profile/Linux/linux_command.md)
+
+##### [Shell程序设计](profile/Linux/Shell程序设计.md)
 
 ## Java Web 
 
