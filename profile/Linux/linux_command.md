@@ -135,10 +135,12 @@
 ##### 进程、线程
 
         top ps
+    TIMEFORMAT="" time ./exec，将打印程序执行时长，cpu利用率等
+    time命令，查看系统利用率
 
 ##### ssh、scp
 
-##### 权限相关
+##### 文件相关
 
     chmod chown chgrp：
         r 4 w 2 x 1
@@ -151,6 +153,9 @@
         chgrp root file，修改文件所属组，group
     
     拥有一个目录的写权限（w），就可以对目录下的文件添加和删除
+    ls -i，查看文件节点号
+    ls -l，查看指向文件的链接数（权限后面的数字）
+    ln，创建链接
 
 ##### 文本相关
 
@@ -166,7 +171,11 @@
         less:
         ed行编辑器：
         touch：
-            touch filename，检查文件是否存在，如果不存在就创建它
+            touch filename，改变文件的修改时间，检查文件是否存在，如果不存在就创建它（不会把有内容的文件变成空文件）
+    wc：单词统计
+        wc -l file，统计行数
+    cut：
+        
     文本检索：
     grep（在文件中搜索字符串）：
         grep [options] PATTERN [FILES]
@@ -220,3 +229,18 @@
 ##### 服务：
 
         systemctl start/restart/stop/enable xxx.service    
+
+##### 关机/重启
+
+    重启命令：
+        reboot
+        shutdown -r now 立刻重启(root用户使用)
+        shutdown -r 10 过10分钟自动重启(root用户使用) 
+        shutdown -r 20:35 在时间为20:35时候重启(root用户使用)
+        如果是通过shutdown命令设置重启的话，可以用shutdown -c命令取消重启
+    关机命令：
+        halt   立刻关机
+        poweroff  立刻关机
+        shutdown -h now 立刻关机(root用户使用)
+        shutdown -h 10 10分钟后自动关机
+        如果是通过shutdown命令设置关机的话，可以用shutdown -c命令取消重启        

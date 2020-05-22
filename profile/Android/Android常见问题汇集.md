@@ -70,6 +70,11 @@
     windowIsTranslucent为true时，动画属性无效，可试一下 Animation.Translucent
     windowIsTranslucent为true时，onStop生命周期不执行
     
+    RecyclerView：
+        数据错乱，一般是由ViewHolder的复用引起的，可由设置tag等方式解决；
+        item图片闪烁，也是由ViewHolder的复用引起view重绘等，解决：setHasStableIds(true)、复写getItemId、notifyItemChanged，具体原因待看源码；
+        RecyclerView.getChildCount();  //返回列表中的显示个数，不是item总个数
+    
 #### 常见场景
 
     Activity与Fragment之间通信：
