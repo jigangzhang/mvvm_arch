@@ -30,6 +30,10 @@
     
     ViewGroup中测量尺寸的常用方法有 measureChildWithMargins、getChildMeasureSpec，measure阶段
     ViewGroup的性能主要看measure的次数
+    ViewGroup在没有子View的区域不能触发dispatchTouchEvent：
+        子View实现点击事件后，触摸事件生效；
+        ViewGroup设置点击事件后，触摸事件生效；
+    
     View的Visible为GONE时不会进行measure、onLayout
     ViewGroup中一般不重写onDraw（draw中一般不会调用），若需要在ViewGroup中绘制，可重写dispatchDraw()
     ViewGroup中可使用setWillNotDraw(bool)强制绘制（false为绘制），在LinearLayout中有使用，且有重写onDraw(Canvas)
