@@ -28,6 +28,10 @@
         AttachedToWindow之后的调用，会发送到handler中执行（UI handler）
         AttachedToWindow是发生在ViewRootImpl.performTraversals中（第一次绘制），在Activity的onResume阶段发生
     
+    View.getWindowVisibleDisplayFrame：
+        全面屏兼容问题，在onResume之前，获取到的是不包含导航的高度，之后是实际高度？？？？
+        全面屏兼容问题，Popupwindow不适用时 getWindowVisibleDisplayFrame 的使用
+    
     ViewGroup中测量尺寸的常用方法有 measureChildWithMargins、getChildMeasureSpec，measure阶段
     ViewGroup的性能主要看measure的次数
     ViewGroup在没有子View的区域不能触发dispatchTouchEvent：

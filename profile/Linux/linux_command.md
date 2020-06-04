@@ -85,6 +85,13 @@
     /usr/include：保存头文件，用于对常量的定义和对系统函数及库函数调用的声明
         子目录 /sys或 /linux 保存依赖于特定Linux版本的头文件
     /lib64、/lib和/usr/lib：存储标准系统库文件，库文件必须遵循特定的命名规范且需要在命令行中明确指定    
+    /etc/passwd，用户账号数据库
+    /etc/shadow，用户加密口令
+
+##### 用户管理
+
+    id，查看当前用户的id、gid等信息（对应 passwd文件中的对应行）
+    uname，查看主机信息，具体见 man uname（uname -a、-s、-i等等）
 
 ##### 常用命令
 
@@ -130,6 +137,7 @@
 ##### 压缩包相关
 
         zip
+    tar cvfB file.tar 1024，打包？？？    
 
 
 ##### 进程、线程
@@ -137,8 +145,11 @@
         top ps
     ps：
         ps -a，当前正在运行进程的列表    
+        ps -ax，
     TIMEFORMAT="" time ./exec，将打印程序执行时长，cpu利用率等
     time命令，查看系统利用率
+    nice命令，改变程序的优先级
+    ulimit命令，为某一特定shell中运行的程序设置限制
 
 ##### ssh、scp
 
@@ -157,8 +168,11 @@
     拥有一个目录的写权限（w），就可以对目录下的文件添加和删除
     ls -i，查看文件节点号
     ls -l，查看指向文件的链接数（权限后面的数字）
+    ls -lstr，ls -l -s -t -r，
     od -c，查看文件内容？
     ln，创建链接
+    sort -r file，逆向排序
+    dd if=/dev/fd0 of=/temp/file.dd bs=18k，复制？？？
 
 ##### 文本相关
 
