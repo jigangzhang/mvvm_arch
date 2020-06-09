@@ -132,7 +132,7 @@
 
 ##### Linux文档项目 [地址](http://www.tldp.org)
 
-##### 源码下载地址 [URL](https://www.wrox.com/go/downloadcode)
+##### Linux程序设计--源码下载地址 [URL](https://www.wrox.com/go/downloadcode)
 
 ##### Linux [常用命令](profile/Linux/linux_command.md)
 
@@ -141,6 +141,8 @@
 ##### [文件操作](profile/Linux/Linux文件操作.md)
 
 ##### [Linux环境](profile/Linux/Linux环境.md)
+
+##### [终端](profile/Linux/终端.md)
 
 ## Java Web 
 
