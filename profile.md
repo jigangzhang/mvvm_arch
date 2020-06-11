@@ -144,6 +144,8 @@
 
 ##### [终端](profile/Linux/终端.md)
 
+##### [使用curses函数库管理基于文本的屏幕](profile/Linux/使用curses管理屏幕.md)
+
 ## Java Web 
 
 ##### Tomcat
