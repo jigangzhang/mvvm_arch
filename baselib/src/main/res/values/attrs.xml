@@ -91,6 +91,16 @@
         <attr name="unSelectedColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="PageIndicatorView">
+        <attr name="pageItemSize" format="integer" />
+        <attr name="indicator_margin" format="dimension" />
+        <attr name="indicator_width" format="dimension" />
+        <attr name="indicator_height" format="dimension" />
+        <attr name="out_indicator_width" format="dimension" />
+        <attr name="indicatorNormalColor" format="color" />
+        <attr name="indicatorSelectedColor" format="color" />
+    </declare-styleable>
+
     <declare-styleable name="CustomRatingBar">
         <attr name="srb_borderColor" format="color" />
         <attr name="srb_fillColor" format="color" />
@@ -116,13 +126,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="PageIndicatorView">
-        <attr name="pageItemSize" format="integer" />
-        <attr name="indicator_margin" format="dimension" />
-        <attr name="indicator_width" format="dimension" />
-        <attr name="indicator_height" format="dimension" />
-        <attr name="out_indicator_width" format="dimension" />
-        <attr name="indicatorNormalColor" format="color" />
-        <attr name="indicatorSelectedColor" format="color" />
+    <declare-styleable name="SideBar">
+        <attr name="side_textSize" format="dimension" />
     </declare-styleable>
 </resources>

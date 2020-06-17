@@ -82,6 +82,9 @@
         数据错乱，一般是由ViewHolder的复用引起的，可由设置tag等方式解决；
         item图片闪烁，也是由ViewHolder的复用引起view重绘等，解决：setHasStableIds(true)、复写getItemId、notifyItemChanged，具体原因待看源码；
         RecyclerView.getChildCount();  //返回列表中的显示个数，不是item总个数
+        要使列表某一项滑动至list顶部使用下面：
+        ((LinearLayoutManager) mBinding.list.getLayoutManager()).scrollToPositionWithOffset(i, 0);    
+        list.scrollToPosition(i)，只是使某一项滑动至可见
     
 #### 常见场景
 

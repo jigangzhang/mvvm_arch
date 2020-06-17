@@ -146,6 +146,8 @@
 
 ##### [使用curses函数库管理基于文本的屏幕](profile/Linux/使用curses管理屏幕.md)
 
+##### [数据管理](profile/Linux/数据管理.md)
+
 ## Java Web 
 
 ##### Tomcat
