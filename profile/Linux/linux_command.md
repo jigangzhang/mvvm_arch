@@ -178,6 +178,7 @@
     ln，创建链接
     sort -r file，逆向排序
     dd if=/dev/fd0 of=/temp/file.dd bs=18k，复制？？？
+    whereis mysql，查找mysql对应的文件夹
 
 ##### 文本相关
 

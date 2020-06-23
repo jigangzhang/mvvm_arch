@@ -148,6 +148,8 @@
 
 ##### [数据管理](profile/Linux/数据管理.md)
 
+##### [MySQL](profile/Linux/MySQL.md)
+
 ## Java Web 
 
 ##### Tomcat
