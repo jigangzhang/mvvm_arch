@@ -152,6 +152,8 @@
 
 ##### [开发工具](profile/Linux/开发工具.md)
 
+##### [调试](profile/Linux/Debug.md)
+
 ## Java Web 
 
 ##### Tomcat
