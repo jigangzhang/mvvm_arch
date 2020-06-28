@@ -136,12 +136,34 @@
 
     PATH=$PATH:path，临时设置，将path路径添加到环境变量
     .bash_profile，编辑这个文件（home目录下），将上方命令添加到文件末尾，然后重新登录使生效
-    export
+    export PATH=$PATH:/usr/local/xxx，临时设置，shell退出后失效
 
 ##### 压缩包相关
 
         zip
     tar cvfB file.tar 1024，打包？？？    
+    文件后缀名为.tar.gz或.tgz，这类文件通常也被称为tarballs文件：
+        使用普通的tar命令压缩文件：
+            tar cvf xxx-1.0.tar xxx.c xx1.c xx2.c xx.h xxx.1 Makefile，生成tar文件
+            gzip xxx-1.0.tar，使用压缩程序gzip进行压缩，使容量更小，生成.tar.gz文件
+        解压文件：
+            gzip -d xxx-1.0.tar.gz，解压生成xxx-1.0.tar文件
+            tar xvf xxx-1.0.tar，解压出原文件
+        使用GNU版本的tar命令压缩文件：
+            tar zcvf xxx-1.0.tgz xxx.c xx1.c xx2.c xx.h xxx.1 Makefile，生成压缩文件
+        解压缩：
+            tar zxvf xxx-1.0.tgz，解压出原始文件
+        tar ztcf，在不解压文件了解压缩文件的内容
+        tar [options] [list of files]：
+            options可以是文件或设备
+            列表中可以包含目录，默认目录中所有子目录都将被包含到档案文件中，添加到新档案文件或已有档案文件中
+            c，创建新档案文件
+            f，指定目标为一个文件而不是一个设备
+            t，列出档案文件的内容，但不真正释放它们
+            v(verbose)，显示tar命令执行的详细过程
+            x，从档案文件中释放文件
+            z，在GNU版本的tar命令中用gzip压缩档案文件
+        其他选项参考tar命令手册页
 
 
 ##### 进程、线程

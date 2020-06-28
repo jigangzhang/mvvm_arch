@@ -150,6 +150,8 @@
 
 ##### [MySQL](profile/Linux/MySQL.md)
 
+##### [开发工具](profile/Linux/开发工具.md)
+
 ## Java Web 
 
 ##### Tomcat
