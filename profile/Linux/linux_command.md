@@ -170,11 +170,19 @@
 
         top ps
     ps：
-        ps -a，当前正在运行进程的列表    
-        ps -ax，
+        ps -ef，显示进程信息，如：TTY列显示进程是从哪一个终端启动的，TIME列是进程目前为止所占用的CPU时间，CMD列显示启动进程所使用的命令
+        ps -ax/ax，命令输出中的STAT列用来表明进程的当前状态
+        ps -a，查看所有的进程， -f 选项显示进程完整的信息
+        ps -l或-f选项，查看正在运行的进程的nice值，NI列
+        ps -al，
+        ps x，查看状态栏，STAT中包含字符N表明这个进程的nice值已被修改过，不再是默认值
+    kill：
+        kill -HUP pid，向pid进程发送 挂断 信号
     TIMEFORMAT="" time ./exec，将打印程序执行时长，cpu利用率等
     time命令，查看系统利用率
     nice命令，改变程序的优先级
+    nice xxx &，启动xxx，将给xxx分配一个+10的nice值
+    renice 10 pid，调整进程的nice值，降低进程优先级，使其运行不频繁
     ulimit命令，为某一特定shell中运行的程序设置限制
     命令行下后台运行程序：./exec &
 
