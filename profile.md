@@ -160,6 +160,8 @@
 
 ##### [进程间通信：管道](profile/Linux/管道.md)
 
+##### [信号量、共享内存和消息队列](profile/Linux/信号量、共享内存和消息队列.md)
+
 ## Java Web 
 
 ##### Tomcat
