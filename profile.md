@@ -158,6 +158,8 @@
 
 ##### [POSIX线程](profile/Linux/POSIX线程.md)
 
+##### [进程间通信：管道](profile/Linux/管道.md)
+
 ## Java Web 
 
 ##### Tomcat
