@@ -88,6 +88,9 @@
     /etc/passwd，用户账号数据库
     /etc/shadow，用户加密口令
     /dev/tty，始终指向当前终端或当前的登录会话
+    /etc/services，系统文件，端口号及通过它们提供的服务
+    /etc/hosts，域名-IP映射文件
+    /etc/xinetd.conf和 /etc/xinetd.d 目录中的文件，因特网守护进程的配置文件
 
 ##### 用户管理
 
@@ -96,6 +99,11 @@
     who，当前登录的用户
     ps -e，当前虚拟控制台上运行的shell和执行的程序
 
+##### 网络
+
+    netstat命令，查看网络连接情况：
+        netstat -A inet，显示TCP/IP连接？local address一栏显示的是服务器，foreign address一栏显示的是远程客户，端口号与程序中指定的不一致
+    ifconfig
 
 ##### 常用命令
 
@@ -175,9 +183,11 @@
         ps -a，查看所有的进程， -f 选项显示进程完整的信息
         ps -l或-f选项，查看正在运行的进程的nice值，NI列
         ps -al，
+        ps lx，可查看状态，S表示休眠状态，不消耗CPU资源
         ps x，查看状态栏，STAT中包含字符N表明这个进程的nice值已被修改过，不再是默认值
     kill：
         kill -HUP pid，向pid进程发送 挂断 信号
+        killall server1 server2 ...
     TIMEFORMAT="" time ./exec，将打印程序执行时长，cpu利用率等
     time命令，查看系统利用率
     nice命令，改变程序的优先级
@@ -204,7 +214,7 @@
     ls -i，查看文件节点号
     ls -l，查看指向文件的链接数（权限后面的数字）
     ls -lstr，ls -l -s -t -r，
-    ls -lF，查看输出结果，第一个字符p，表示是一个管道，最后的|符号由-F选项添加的，也表示是一个管道
+    ls -lF，查看输出结果，第一个字符p，表示是一个管道，最后的|符号由-F选项添加的，也表示是一个管道；第一个字符s，表示是套接字，最后是=
     od -c，查看文件内容？
     ln，创建链接
     sort -r file，逆向排序
