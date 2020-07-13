@@ -158,3 +158,41 @@
     
     C/C++中常见的问题：
         打印字符串（指针）时，会打印到其他内容，就像是指针指到了临近地方
+
+#### 集合
+
+    HashMap：数组+单向链表实现
+        初始容量（DEFAULT_INITIAL_CAPACITY）默认为16，默认加载因子（DEFAULT_LOAD_FACTOR）为0.75
+        阈值（threshold）为：位运算，CAPACITY的2被幂
+        key、value、hash组成一个Node，hash为key的hashCode值
+        根据hash和数组长度确定Node在数组中的位置（position=hash & (n-1)）
+        Node是个链表结点
+        存取数据时，根据key找到对应位置，与该位置处的Node的key做比较，若key相等，进行存取操作，否则，沿着链表查看下一结点
+        当存放的数据容量（size）大于threshold（阈值）时，会进行resize，扩容，容量为2的幂，阈值也会相应增大，
+            已存在的数据会重新确定对应位置（index计算方式见上面）
+    
+    LinkedHashMap：继承HashMap，比HashMap多了一个双向链表
+        head、tail，对应双向链表的头、尾指针
+        结点类型为LinkedHashMapEntry，其中有before、after，指向结点的前后结点
+        每次做保存数据时，对新加的结点进行before、after结点的链接，同时也会调用linkNodeLast 移动tail指针
+        做遍历操作时，使用双向链表：head、tail进行遍历
+        
+    HashSet：构造函数中创建了一个HashMap，所有操作（存取等）都是通过HashMap实现，存到数据对应HashMap的key，value是PRESENT（是个伪值）    
+
+    LinkedHashSet：仅仅是继承HashSet
+    
+    ArrayList：内部使用数组实现
+        初始化时，若不指定大小，elementData数组会初始化为一个空数组，第一次添加数据时，数组容量会指定为默认值
+        初始容量（DEFAULT_CAPACITY）默认为10，大于10后，会自增，但不能超过最大容量
+        数组允许的最大容量为 Integer.MAX_VALUE - 8
+        数组增长算法：new>= oldCapacity + (oldCapacity >> 1)
+        每次添加数据时，都会检查数组容量，+1后是否会超过数组长度，若超过就扩容
+        trimToSize，将数组长度减小到size（数据数量）
+
+    LinkedList：使用双向链表实现，内部还有栈、队列的方法实现
+        结点，Node：next、pre，双向链表的指针
+        常用的双向链表操作
+        删除时，仅仅只是将item的pre、next置为null
+
+    Vector：ArrayList的线程安全版，同步方法
+    HashTable：HashMap的线程安全版，同步方法
