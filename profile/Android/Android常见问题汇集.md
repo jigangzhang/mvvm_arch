@@ -10,7 +10,56 @@
         检查输入参数是否有效；
         检查滑动的同时是否有触发measure、layout等的操作，如：设置margin等；
         检查是否有禁止滑动的设置，如：重写scrollVerticallyBy、canScrollVertically等；
+
+#### 屏幕适配
+
+    1dp = 1px * (dpi/160)， px = dp * (dpi / 160)， dpi = width(px) / 360 *160 （360为基准值，即将屏幕宽度默认为360dp）
+    设计稿以360dp的宽度为基准，不同的分辨率下的dpi值不同，如：720x1280 的dpi为 320，1080x1920 的dpi为 480
+    dp是像素无关的，一般情况下使用dp即可，但是在同样的分辨率，但是不同的dpi值时，显示效果是不一样的，dpi越大，1dp所占的px越多，控件显示越大；dpi越小，1dp所占的px越少，控件显示小
+    宽高限定符适配：
+        设定一个基准分辨率（如：360x640），其他分辨率都根据这个分辨率计算一个倍数，如：720为2倍的尺寸大小
+        在不同尺寸文件内部，根据尺寸倍数编写对应的dimens文件
+        运行时，根据dimens引用到对应分辨率下找
+        资源文件夹：values-widthxheight，如：value-1080x1920
+        只能适配对应分辨率的屏幕，对全面屏的适配会失效，因为分辨率不确定（全面屏高度不一致）
     
+    smallestWidth适配（最小宽度）：
+        sw限定符适配
+        android识别屏幕可用高度和宽度的最小尺寸的dp值（实际就是宽度），然后在资源文件中寻找对应限定符的文件夹下的资源文件
+        如：宽为1080px、dpi为480的屏幕的dp值为360，对应 values-sw360dp 文件夹下的资源文件
+        使用sw可适配 相同分辨率但不同dpi的屏幕，dp值为：width(dp) /(dpi / 160)，对应的资源文件夹名称为：values-sw<N>dp
+        如果没有找到对应文件夹，系统会向下寻找，如没有360，但有350，那么系统会选择values-sw350dp
+        尺寸（dimens）值的计算：以360dp为基准，大于360dp的屏幕的dimens值要缩小，小于360dp的dimens值要放大， dimen=dimen*(360/sw)
+        缺点：对多个不同屏幕可能会有多个values文件夹，从而导致apk体积增大
+
+    今日头条适配方案：
+        直接修改density值，强行把不同分辨率的手机的宽度dp值改为一个统一值
+        保证px/density（手机像素宽度）这个值始终是一个统一值，如：360dp
+        注意点：所有设计稿都要以一个统一值为基准宽度（如：360dp）
+        可能会影响一些第三方库的显示
+        px = dp * density，density = dpi / 160， 以360dp为基准：density = width(屏幕宽px) / 360， dpi =  width/360 * 160
+        和 density 相关的还有 densityDpi、scaledDensity，我们根据 density 等比修改 densityDpi、scaledDensity
+        设置代码（在setContentView之前调用，若未拦截字体设置，可加上scaledDensity）：
+            DisplayMetrics appMetrics = application.getResources().getDisplayMetrics();
+            DisplayMetrics sysMetrics = Resources.getSystem().getDisplayMetrics();
+            int targetDensity = appMetrics.widthPixels / 360;
+            appMetrics.density = targetDensity;
+            appMetrics.scaledDensity = (sysMetrics.scaledDensity / sysMetrics.density) * targetDensity;
+            appMetrics.densityDpi = targetDensity * 160;
+    
+            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            metrics.density = targetDensity;
+            metrics.scaledDensity = (sysMetrics.scaledDensity / sysMetrics.density) * targetDensity;
+            metrics.densityDpi = targetDensity * 160;
+            Configuration configuration = context.getResources().getConfiguration();
+            configuration.densityDpi = targetDensity * 160;
+            context.getResources().updateConfiguration(configuration, metrics);
+            同时设置Activity和Application的density值
+        修改dpi后，可能会遇到一些问题（我遇到的问题）：
+            RecyclerView 的 item 中修改未生效（特例，只有一个RecyclerView出现问题，非全部）； 解决：在Adapter中调用上述代码，重新修改context的dpi等
+            代码方式生成的布局被截断，宽高都被截，显示不全（是添加到百度地图上的Marker，只有这一个出现问题，density未生效）；解决：dp转px的方法中使用的density使用手动计算所得（width/360）
+            修改的dpi、density、scaledDensity未全部生效，感觉就是部分生效（问题手机是华为10.1系统）
+
 #### View相关
     
     getMeasuredWidth/getMeasuredHeight的生效时机：
@@ -81,6 +130,16 @@
     RecyclerView：
         数据错乱，一般是由ViewHolder的复用引起的，可由设置tag等方式解决；
         item图片闪烁，也是由ViewHolder的复用引起view重绘等，解决：setHasStableIds(true)、复写getItemId、notifyItemChanged，具体原因待看源码；
+            // Find from scrap/cache via stable ids, if exists
+            if (mAdapter.hasStableIds()) {
+                holder = getScrapOrCachedViewForId(mAdapter.getItemId(offsetPosition),
+                        type, dryRun);
+                if (holder != null) {
+                    // update position
+                    holder.mPosition = offsetPosition;
+                    fromScrapOrHiddenOrCache = true;
+                }
+            }
         RecyclerView.getChildCount();  //返回列表中的显示个数，不是item总个数
         要使列表某一项滑动至list顶部使用下面：
         ((LinearLayoutManager) mBinding.list.getLayoutManager()).scrollToPositionWithOffset(i, 0);    

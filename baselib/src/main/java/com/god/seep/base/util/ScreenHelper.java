@@ -1,10 +1,17 @@
 package com.god.seep.base.util;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.view.WindowManager;
+
+import androidx.annotation.NonNull;
 
 public class ScreenHelper {
 
@@ -88,7 +95,7 @@ public class ScreenHelper {
      * @param pxVal   像素值
      */
     public static int px2Dp(Context context, int pxVal) {
-        float density = context.getResources().getDisplayMetrics().density;
+        int density = context.getResources().getDisplayMetrics().widthPixels / 360;
         return (int) (pxVal / density + 0.5f);
     }
 
@@ -99,7 +106,7 @@ public class ScreenHelper {
      * @param dpVal   dp值
      */
     public static int dp2Px(Context context, float dpVal) {
-        float density = context.getResources().getDisplayMetrics().density;
+        int density = context.getResources().getDisplayMetrics().widthPixels / 360; ////因修改了系统dpi值，此处以360为基准，自己计算density
         return (int) (dpVal * density + 0.5f);
     }
 
@@ -124,5 +131,28 @@ public class ScreenHelper {
     public static int sp2px(Context context, float spValue) {
         final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
+    }
+
+    /**
+     * 用于解决部分7.0及以上版本手机设置显示大小后的布局变形问题
+     * 一种UI适配方式（头条方案）
+     * 以360为基准（设计稿），dp转px时也应该使用手动计算
+     */
+    public static void setDefaultDensity(Activity context, @NonNull Application application) {
+        if (context == null) return;
+        DisplayMetrics appMetrics = application.getResources().getDisplayMetrics();
+        DisplayMetrics sysMetrics = Resources.getSystem().getDisplayMetrics();
+        int targetDensity = appMetrics.widthPixels / 360;
+        appMetrics.density = targetDensity;
+        appMetrics.scaledDensity = (sysMetrics.scaledDensity / sysMetrics.density) * targetDensity;
+        appMetrics.densityDpi = targetDensity * 160;
+
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        metrics.density = targetDensity;
+        metrics.scaledDensity = (sysMetrics.scaledDensity / sysMetrics.density) * targetDensity;
+        metrics.densityDpi = targetDensity * 160;
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.densityDpi = targetDensity * 160;
+        context.getResources().updateConfiguration(configuration, metrics);
     }
 }
