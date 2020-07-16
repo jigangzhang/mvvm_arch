@@ -57,6 +57,10 @@
             同时设置Activity和Application的density值
         修改dpi后，可能会遇到一些问题（我遇到的问题）：
             RecyclerView 的 item 中修改未生效（特例，只有一个RecyclerView出现问题，非全部）； 解决：在Adapter中调用上述代码，重新修改context的dpi等
+                public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    ScreenHelper.setDefaultDensity((Activity) parent.getContext(), App.getInstance());
+                    return super.onCreateViewHolder(parent, viewType);
+                }
             代码方式生成的布局被截断，宽高都被截，显示不全（是添加到百度地图上的Marker，只有这一个出现问题，density未生效）；解决：dp转px的方法中使用的density使用手动计算所得（width/360）
             修改的dpi、density、scaledDensity未全部生效，感觉就是部分生效（问题手机是华为10.1系统）
 
@@ -217,6 +221,31 @@
     
     C/C++中常见的问题：
         打印字符串（指针）时，会打印到其他内容，就像是指针指到了临近地方
+
+#### String相关
+
+    String的内存分配：
+        字符串常量池，JDK1.7及以后，将字符串常量池从方法区移动到堆
+        String str = "abs";     //这种声明方式叫作字面量声明，把字符串用双引号包起来，然后赋值给一个变量，会把字符串放到字符串常量池，然后返回给变量
+        String str1 = new String("abs"); //这种方式，不管在字符串常量池中有没有，都会在堆中创建一个新的对象
+        上面两种方式创建的对象引用指向不同的位置，用 == 比较返回false
+        String.intern，native方法，作用是：
+            如果当前字符串存在于字符串常量池（判断条件是equals为true），就返回这个字符串在字符串常量池中的引用
+            如果不存在，就在字符串常量池中创建一个引用，指向堆中已存在的字符串，然后返回对应的字符串常量池的引用
+        上面的str == str1，返回false，地址不同
+        str1 = str1.intern()，然后 str == str1，返回true，指向字符串常量池中的同一个地址
+    
+    StringBuffer：
+        线程安全的，同步方法（synchronized）
+        使用字符数组保存，默认初始容量为16，或字符串长度+16
+        toSting中，new String的方式返回字符串
+    
+    StringBuilder:
+        非线程安全
+        toString中，使用一个native方法 StringFactory.newStringFromChars 返回字符串
+        其他同StringBuffer
+    二者都继承AbstractStringBuilder    
+    String中，使用native方法操作字符串    
 
 #### 集合
 
