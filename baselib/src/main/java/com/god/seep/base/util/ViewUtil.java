@@ -21,6 +21,25 @@ import com.god.seep.base.R;
 public class ViewUtil {
     private static final String TAG_NET_CONTENT = "TagNetContent";
 
+    public static Bitmap createBitmap(View view) {
+        if (null == view) {
+            return null;
+        } else {
+            view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+            view.buildDrawingCache();
+            Bitmap bitmap = view.getDrawingCache();
+            if (null == bitmap) {
+                return null;
+            } else {
+                bitmap.setDensity(ScreenHelper.getScreenWidth(view.getContext()) / 360 * 160);
+//                view.destroyDrawingCache();
+                return bitmap;
+            }
+        }
+    }
+
     /**
      * 获取状态栏高度
      */

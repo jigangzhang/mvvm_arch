@@ -186,11 +186,15 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
         return ViewModelProviders.of(this, factory).get(clz);   //内部调用了AndroidViewModelFactory，故不用重写factory，除非需要多个参数
     }
 
+    private ResourcesWrapper resources;
+
     @Override
     public Resources getResources() {
-        Resources resources = super.getResources();
-        if (resources != null && resources.getConfiguration().fontScale != 1) {
+        if (resources == null)
+            resources = new ResourcesWrapper(super.getResources());
+        if (resources.getConfiguration().fontScale != 1) {
             Configuration configuration = resources.getConfiguration();
+            configuration.densityDpi = resources.getDisplayMetrics().densityDpi;
             configuration.fontScale = 1;
             resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         }
@@ -199,8 +203,9 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        if (newConfig.fontScale != 1)
-            getResources();
+        Resources resources = getResources();
+        newConfig.densityDpi = resources.getDisplayMetrics().densityDpi;
+        newConfig.fontScale = 1;
         super.onConfigurationChanged(newConfig);
     }
 }

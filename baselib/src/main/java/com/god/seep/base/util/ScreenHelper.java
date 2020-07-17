@@ -155,4 +155,13 @@ public class ScreenHelper {
         configuration.densityDpi = targetDensity * 160;
         context.getResources().updateConfiguration(configuration, metrics);
     }
+
+    public static void setContextDensity(Context context) {
+        DisplayMetrics sysMetrics = Resources.getSystem().getDisplayMetrics();
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        int targetDensity = metrics.widthPixels / 360;
+        metrics.density = targetDensity;
+        metrics.densityDpi = targetDensity * 160;
+//        metrics.scaledDensity = (sysMetrics.scaledDensity / sysMetrics.density) * targetDensity;
+    }
 }
