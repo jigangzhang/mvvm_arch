@@ -46,12 +46,29 @@ public class Practice {
     /**
      * backtrack
      */
-    public static ArrayList<int[]> subSet(int[] nums) {
-        ArrayList<int[]> children = new ArrayList<>();
-        for (int i = 0; i < nums.length; i++) {
-            children.add(new int[]{i});
+    public static ArrayList<ArrayList<Integer>> subSets(int[] nums) {
+        ArrayList<Integer> tmpList = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> results = new ArrayList<>();
+        Arrays.sort(nums);
+        backtrack(nums, 0, tmpList, results);
+        for (int i = 0; i < results.size(); i++) {
+            System.out.println(Arrays.toString(results.get(i).toArray()));
         }
-        return children;
+        return results;
+    }
+
+    /**
+     * backtrack
+     */
+    public static void backtrack(int[] nums, int position, ArrayList<Integer> tmpList, ArrayList<ArrayList<Integer>> results) {
+        results.add(new ArrayList<>(tmpList));
+        if (tmpList.size() == nums.length)
+            return;
+        for (int i = position; i < nums.length; i++) {
+            tmpList.add(nums[i]);
+            backtrack(nums, i + 1, tmpList, results);
+            tmpList.remove(tmpList.size() - 1);
+        }
     }
 
     /**
@@ -492,7 +509,7 @@ public class Practice {
 
     public static void main(String[] args) {
 //        int position = findStrPosition1("java", "va");
-        int[] sort = radixSort(new int[]{33, 29, 11, 9, 0, 34, 8, 7, 5, 5, 5, 4, 3, 1});
-        System.out.println("position: " + Arrays.toString(sort));
+        subSets(new int[]{33, 29, 11, /*9, 0, 34, 8, 7, 5, 5, 5, 4, 3,*/ 1});
+//        System.out.println("position: " + Arrays.toString(sort));
     }
 }
