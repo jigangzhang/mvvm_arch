@@ -14,6 +14,8 @@ import android.view.View;
 import com.god.seep.base.R;
 import com.god.seep.base.util.ScreenHelper;
 
+import java.util.List;
+
 import androidx.annotation.Nullable;
 
 public class SideBar extends View {
@@ -35,8 +37,19 @@ public class SideBar extends View {
         init(context, attrs);
     }
 
-    private char characters[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-            'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+//    private char characters[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+//            'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+
+    private String[] characters;
+
+    public void setCharacters(List<String> characters) {
+        int[] a = new int[1];
+        this.characters = new String[characters.size()];
+        for (int i = 0; i < characters.size(); i++)
+            this.characters[i] = characters.get(i);
+        requestLayout();
+        invalidate();
+    }
 
     void init(Context context, AttributeSet attrs) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.SideBar);
@@ -63,31 +76,36 @@ public class SideBar extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        if (characters == null) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            return;
+        }
         if (widthMode == MeasureSpec.AT_MOST) {
-            float width = mPaint.measureText(characters, 0, 1)
+            float width = mPaint.measureText(characters[0], 0, 1)
                     + ScreenHelper.dp2Px(getContext(), 2) + getPaddingStart() + getPaddingEnd();
             widthMeasureSpec = MeasureSpec.makeMeasureSpec((int) width, widthMode);
         }
         if (heightMode == MeasureSpec.AT_MOST) {
             mRect.setEmpty();
-            mPaint.getTextBounds(characters, 0, 1, mRect);
+            mPaint.getTextBounds(characters[0], 0, 1, mRect);
             float height = (mRect.height() + ScreenHelper.dp2Px(getContext(), 4)) * characters.length;
             heightMeasureSpec = MeasureSpec.makeMeasureSpec((int) height, MeasureSpec.EXACTLY);
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        itemWidth = mPaint.measureText(characters, 0, 1) + ScreenHelper.dp2Px(getContext(), 2);
+        itemWidth = mPaint.measureText(characters[0], 0, 1) + ScreenHelper.dp2Px(getContext(), 2);
         itemHeight = getMeasuredHeight() / characters.length;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (characters == null) return;
         for (int i = 0; i < characters.length; i++) {
 //            float textWidth = mPaint.measureText(characters, i, 1);
             mRect.setEmpty();
-            mPaint.getTextBounds(characters, i, 1, mRect);
+            mPaint.getTextBounds(characters[i], 0, 1, mRect);
             //y值为字的基线，在字的底部
-            canvas.drawText(characters, i, 1, getPaddingStart() + (itemWidth - mRect.width()) / 2,
+            canvas.drawText(characters[i], 0, 1, getPaddingStart() + (itemWidth - mRect.width()) / 2,
                     i * itemHeight + (itemHeight + mRect.height()) / 2, mPaint);
         }
     }
@@ -101,7 +119,7 @@ public class SideBar extends View {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 if (mListener != null && touchIndex > -1 && touchIndex < characters.length)
-                    mListener.onLetterChanged(String.valueOf(characters[touchIndex]));
+                    mListener.onLetterChanged(characters[touchIndex]);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
