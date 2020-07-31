@@ -19,6 +19,8 @@ UML类图
     5. 生成HeapDump后进行分析操作：heapdumpListener.analyze(heapDump);
     6. 启动HeapAnalyzerService进行堆栈分析：HeapAnalyzerService.runAnalysis(...);
     7. 启动DisplayLeakService保存分析结果并发出通知：AbstractAnalysisResultService.sendResultToListener()；
-    
+
+    WeakReference、ReferenceQueue，构造WeakReference时将ReferenceQueue传入，在弱引用指向的对象弱可及（对象的强引用断开，弱引用还存在？）就会被加入引用队列
+    ReferenceQueue.poll，轮询队列，若有对象不为null，则认为该对象已经被GC回收，并返回该对象，然后从watchedObjects（HashMap）中移除
     弱引用指向的对象一旦变得弱可及，就会被加入队列，根据队列中是否存在引用可判断是否泄漏；
     在7中使用HeapAnalyzer进行具体分析，主要使用HaHa库进行内存分析，包括泄漏对象的引用链等。
