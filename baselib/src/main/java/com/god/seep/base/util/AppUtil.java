@@ -307,4 +307,21 @@ public class AppUtil {
         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         context.startActivity(intent);
     }
+
+    /**
+     * 错误码转换
+     *
+     * @param errorCode 错误码
+     */
+    public static String errorCode2String(Context context, String errorCode, String errorMessage) {
+        if (TextUtils.isEmpty(errorCode)) {
+            return null;
+        }
+        int id = context.getResources().getIdentifier(errorCode, "string", context.getPackageName());
+        if (id != 0) {
+            String msg = context.getString(id);
+            return TextUtils.isEmpty(msg) ? errorMessage : msg;
+        }
+        return errorMessage;
+    }
 }

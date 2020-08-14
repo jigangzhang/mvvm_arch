@@ -43,3 +43,18 @@ UML类图
         }
     }
     ```
+
+#### 同步屏障
+
+    消息队列的同步屏障是由 MessageQueue.postSyncBarrier设置的，以当前时间为准，使Message的target 为 null 插入到消息队列
+    MessageQueue.next中获取Message时，先看是否有同步屏障（Message的target为null），若有，则只处理异步消息（队列中无异步消息则会等待，nativePollOnce）
+    MessageQueue.removeSyncBarrier，移除同步屏障，之后就可以处理同步消息了（next方法不会返回同步屏障对应的Message，所以需要主动移除）
+    同步屏障的设置为：mHandler.getLooper().getQueue().postSyncBarrier()
+    
+    同步屏障只在ViewRootImpl中有使用，不对外开放（使用@hide）
+    ViewRootImpl.scheduleTraversals()：
+        mTraversalBarrier = mHandler.getLooper().getQueue().postSyncBarrier();      //设置同步屏障
+        mChoreographer.postCallback(Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, null);    //发送异步消息
+    
+    对屏幕刷新需要优先处理，否则会有卡顿现象，使用同步屏障优先处理异步消息（消息队列的优先级）
+    屏幕刷新是在接收到VSYNC信号后才开始的
