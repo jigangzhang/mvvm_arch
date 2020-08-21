@@ -2,52 +2,42 @@ package com.god.seep.base.update;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.databinding.DataBindingUtil;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.chengcheng.zhuanche.customer.App;
-import com.chengcheng.zhuanche.customer.R;
-import com.chengcheng.zhuanche.customer.bean.AppVersionInfo;
-import com.chengcheng.zhuanche.customer.databinding.DialogDownloadBinding;
-import com.chengcheng.zhuanche.customer.ui.base.BaseDialog;
-import com.chengcheng.zhuanche.customer.utils.AppManager;
-import com.chengcheng.zhuanche.customer.utils.AppUtil;
-import com.chengcheng.zhuanche.customer.utils.PermissionUtil;
-import com.chengcheng.zhuanche.customer.utils.ScreenHelper;
-import com.chengcheng.zhuanche.customer.utils.ToastHelper;
+import com.god.seep.base.R;
+import com.god.seep.base.util.AppManager;
+import com.god.seep.base.util.ScreenHelper;
 
 import java.io.File;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class DownloadDialog extends BaseDialog {
-    private DialogDownloadBinding mBinding;
-    private AppVersionInfo info;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+
+public class DownloadDialog extends Dialog {
+    //    private DialogDownloadBinding mBinding;
+    private Object info;
     private Activity mActivity;
     private boolean isForce;
 
-    public DownloadDialog(@NonNull Activity context, AppVersionInfo versionInfo) {
-        super(context, versionInfo.getForceUpdate() == 0);
+    public DownloadDialog(@NonNull Activity context, Object versionInfo) {
+        super(context);
         this.info = versionInfo;
         this.mActivity = context;
-        this.isForce = versionInfo.getForceUpdate() == 1;
+        this.isForce = /*versionInfo.getForceUpdate() == 1*/true;
     }
 
     @Override
-    public void initPresenter() {
-
-    }
-
-    @Override
-    public void onViewCreate(@Nullable Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_download, null, false);
-        mBinding.setView(this);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        mBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_download, null, false);
+      /*  mBinding.setView(this);
         this.setContentView(mBinding.getRoot());
         mBinding.setIsForce(isForce);
         mBinding.setVersionInfo(mContext.getString(R.string.app_name) + info.getDeviceChannelVersionName() + "(" + info.getDeviceChannelSize() + "M)");
@@ -60,7 +50,7 @@ public class DownloadDialog extends BaseDialog {
                 + File.separator + Environment.DIRECTORY_DOWNLOADS + File.separator + appName);
         if ((file != null && file.exists()) && file.length() > 0) {
             mBinding.update.setText(getContext().getString(R.string.str_install));
-        }
+        }*/
     }
 
     public void onNegativeEv() {
@@ -70,7 +60,7 @@ public class DownloadDialog extends BaseDialog {
         }
     }
 
-    public void onPositive() {
+    /*public void onPositive() {
         if (!PermissionUtil.hasStorePermission(getContext())) {
             PermissionUtil.applyStorePermission(mActivity);
             return;
@@ -121,9 +111,9 @@ public class DownloadDialog extends BaseDialog {
             mBinding.progress.setText("0%");
             mBinding.setProVisible(isForce);
         }
-    }
+    }*/
 
-    @SuppressLint("HandlerLeak")
+/*    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -150,5 +140,5 @@ public class DownloadDialog extends BaseDialog {
                     break;
             }
         }
-    };
+    };*/
 }

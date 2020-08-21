@@ -77,6 +77,7 @@ dependencies {
     debugApi libs.leakcanary_debug
 
     testImplementation tests.junit
+    testImplementation tests.mockito
     androidTestImplementation tests.runner
     androidTestImplementation tests.espresso
 }

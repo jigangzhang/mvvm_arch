@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 
-import com.chengcheng.zhuanche.customer.utils.NetUtil;
-import com.chengcheng.zhuanche.customer.utils.ToastHelper;
+import com.god.seep.base.util.NetUtil;
+import com.god.seep.base.util.ToastHelper;
 
 import java.io.File;
 

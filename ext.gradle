@@ -80,7 +80,9 @@ ext {
 
     tests = [
             junit   : [group: 'junit', name: 'junit', version: '4.12'],
-            runner  : [group: 'androidx.test', name: 'runner', version: '1.1.1'],
+            mockito : [group: 'org.mockito', name: 'mockito-core', version: '2.19.0'],  //模拟依赖对象，以达到隔离依赖的效果，用于本地测试
+
+            runner  : [group: 'androidx.test', name: 'runner', version: '1.1.1'],       //仪器化测试
             espresso: [group: 'androidx.test.espresso', name: 'espresso-core', version: '3.1.1']
     ]
 }
