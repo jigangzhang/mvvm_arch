@@ -37,6 +37,60 @@ android {
     }
 }
 
+task resolveDependencies {
+    doLast {
+//        configurations["api"].dependencies.forEach({
+//            print("dependency: ")
+//            println(it)
+//        })
+//        configurations.forEach({
+//            it.dependencies.forEach({
+//                print("dependency: ")
+//                println(it.getGroup())
+//            })
+//        })
+        dependencies.constraints({
+            it.create("com.github.bumptech.glide:glide", {
+                println(it.versionConstraint)
+//                it.version({it.branch(null)})
+            })
+        })
+        configurations["implementation"].setCanBeResolved(true)
+        def componentIds = configurations["implementation"].incoming.resolutionResult.allDependencies.collect {
+//            println(it.from.id)
+            it.from.id
+        }
+        dependencies.getComponents()
+        dependencies.modules
+        def result = dependencies.createArtifactResolutionQuery()
+                .forComponents(componentIds)
+                .withArtifacts(JvmLibrary, SourcesArtifact, JavadocArtifact)
+                .execute()
+        result.resolvedComponents.forEach({
+            print("resolvedComponent: ")
+            println(it.id)
+        })
+    }
+}
+
+task resolveCompileSources {
+    doLast {
+        configurations["implementation"].setCanBeResolved(true)
+        def componentIds = configurations["implementation"].incoming.resolutionResult.allDependencies.collect {
+            it.from.id
+        }
+        def result = dependencies.createArtifactResolutionQuery()
+                .forComponents(componentIds)
+                .withArtifacts(JvmLibrary, SourcesArtifact, JavadocArtifact)
+                .execute()
+        for (component in result.resolvedComponents) {
+            component.getArtifacts(SourcesArtifact).each {
+                println "Source artifact for ${component.id}: ${it.file}"
+            }
+        }
+    }
+}
+
 /**
  * api 编译时不隐藏依赖类
  * implementation 编译时隐藏依赖类

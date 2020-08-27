@@ -72,6 +72,10 @@
         如果此Activity尝试启动新Activity，则该新Activity将在单独的任务栈中启动
         affinity（Manifest中对应为taskAffinity），Activity、task、Application的一个属性，task的affinity由第一个入栈的Activity指定，拥有相同affinity的Activity属于同一个task，Activity默认从Application继承该属性，其默认值为包名
         该Activity中启动另一个Activity（非SingleInstance模式），将切换到另一个任务栈（到前台），此时back操作将优先处理新Activity所在的栈，最后处理SingleInstance所在的栈
+    singleInstance:
+		指定为singleInstance模式的Activity会启用一个新的返回栈来管理这个Activity，
+		不管是哪个应用程序来访问这个Activity，都共用同一个返回栈，解决了共享Activity实例的问题
+		singleInstance适合需要与程序分离开的页面。
     
     FLAG_ACTIVITY_NEW_TASK：根据目标Activity的affinity进行匹配，若存在affinity相同的task，则压入栈，否则新建task，同一应用下，若都使用默认affinity，那么此flag无效？
     FLAG_ACTIVITY_CLEAR_TOP：
