@@ -319,3 +319,8 @@
     ^：二进制的按位异或运算，对应位置不同则为1，相同则为0
     &：同位与运算，对应位置只有都为1时才为1，否则为0
     |：逻辑或运算，对应位置有1时为1，否则为0
+    
+#### Service相关
+
+    启动多进程Service时，会启动新进程，而启动进程的时间会计算在Service的启动时间中，如果超时就会ANR（前台Service 20s，后台Service 200s）
+    （具体见ActiveServices.bumpServiceExecutingLocked,scheduleServiceTimeoutLocked 源码）
