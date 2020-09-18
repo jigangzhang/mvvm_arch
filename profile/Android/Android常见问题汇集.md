@@ -165,6 +165,7 @@
         要使列表某一项滑动至list顶部使用下面：
         ((LinearLayoutManager) mBinding.list.getLayoutManager()).scrollToPositionWithOffset(i, 0);    
         list.scrollToPosition(i)，只是使某一项滑动至可见
+ 	https://developer.android.com/topic/performance/vitals/render#common-jank（官方建议优化点）
     
 #### 常见场景
 
