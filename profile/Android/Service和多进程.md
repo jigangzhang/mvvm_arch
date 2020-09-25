@@ -31,6 +31,10 @@
         若存在旧的绑定，且与新绑定不同：
             调用链为 新 linkToDeath -> 旧 unlinkToDeath -> 旧 onServiceDisconnected -> 新 onServiceConnected
         若新、旧绑定相同，则直接返回
+    
+    与ANR有关：
+        ActivityManager.getService().serviceDoneExecuting
+        会在ActivityThread中，当service的onCreate、onBind、onRebind、onUnbind、onDestroy之后调用
         
 #### Service的多进程和生命周期相关方法的调用测试
 
