@@ -7,10 +7,12 @@ android {
     def storePath = prop.getProperty('keystore.path')
     signingConfigs {
         release {
-            storeFile file(storePath)
-            storePassword prop.getProperty('keystore.password')
-            keyAlias prop.getProperty('keystore.alias')
-            keyPassword prop.getProperty('keystore.alias_password')
+            if (storePath != null) {
+                storeFile file(storePath)
+                storePassword prop.getProperty('keystore.password')
+                keyAlias prop.getProperty('keystore.alias')
+                keyPassword prop.getProperty('keystore.alias_password')
+            }
         }
     }
 
