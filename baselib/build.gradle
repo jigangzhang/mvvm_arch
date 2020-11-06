@@ -98,8 +98,9 @@ task resolveCompileSources {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api libs.appcompat
-    api libs.component_extension
-    api libs.component_rx_liveData
+
+    api libs.viewmodel
+    api libs.liveData
 
     api libs.recyclerview
     api libs.recyclerview_helper
@@ -117,7 +118,7 @@ dependencies {
 
     api libs.rxjava
     api libs.rxandroid
-    api libs.eventbus
+    api libs.livedata_bus
 
     api libs.glide
     annotationProcessor libs.glide_compiler

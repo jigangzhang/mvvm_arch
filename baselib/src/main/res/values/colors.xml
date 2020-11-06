@@ -17,6 +17,7 @@
     <color name="gray_cc">#CCCCCC</color>
     <color name="gray_dd">#DDDDDD</color>
     <color name="gray_bg">#F6F6F6</color>
+    <color name="gray_text_light">#737B96</color>
 
     <color name="blue_cyan">#00DDDD</color>
     <color name="blue_fill">#2D6DFF</color>

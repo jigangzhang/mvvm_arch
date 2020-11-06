@@ -3,7 +3,8 @@ package com.god.seep.base.arch.viewmodel;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
-import io.reactivex.disposables.Disposable;
+
+import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * ViewModel类：业务相关操作，业务数据，页面相关数据等;  与页面生命周期绑定到一起处理 something

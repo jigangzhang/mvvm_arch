@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.god.seep.base.BaseApplication;
 import com.god.seep.base.arch.viewmodel.BaseViewModel;
 import com.god.seep.base.util.ToastHelper;
 
@@ -16,7 +17,6 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 /**
  * 同BaseActivity的处理，暂缺：网络状态变化的处理、初始化请求数据的空白页面的统一处理、是否需要注册EventBus等
@@ -137,7 +137,11 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
     }
 
     public <T extends ViewModel> T getViewModel(@NonNull Class<T> clz, ViewModelProvider.Factory factory) {
-        return ViewModelProviders.of(this, factory).get(clz);
+        ViewModelProvider.Factory fac = factory;
+        if (fac == null)
+            fac = ViewModelProvider.AndroidViewModelFactory.getInstance(BaseApplication.getInstance());
+        //内部调用了AndroidViewModelFactory，故不用重写factory，除非需要多个参数
+        return new ViewModelProvider(this, fac).get(clz);
     }
 
     @Override

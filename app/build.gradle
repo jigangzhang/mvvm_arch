@@ -94,5 +94,5 @@ dependencies {
 
     implementation libs.constraintlayout
     implementation libs.material
-    implementation libs.rxpermission
+    implementation libs.permissionx
 }

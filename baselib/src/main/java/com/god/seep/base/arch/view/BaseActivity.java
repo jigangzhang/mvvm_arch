@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import com.god.seep.base.BaseApplication;
 import com.god.seep.base.arch.viewmodel.BaseViewModel;
 import com.god.seep.base.receiver.NetworkChangeReceiver;
 import com.god.seep.base.util.AppManager;
@@ -20,7 +21,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+
 import timber.log.Timber;
 
 /**
@@ -183,7 +184,10 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
     }
 
     public <T extends ViewModel> T getViewModel(@NonNull Class<T> clz, ViewModelProvider.Factory factory) {
-        return ViewModelProviders.of(this, factory).get(clz);   //内部调用了AndroidViewModelFactory，故不用重写factory，除非需要多个参数
+        ViewModelProvider.Factory fac = factory;
+        if (fac == null)
+            fac = ViewModelProvider.AndroidViewModelFactory.getInstance(BaseApplication.getInstance());
+        return new ViewModelProvider(this, fac).get(clz);   //内部调用了AndroidViewModelFactory，故不用重写factory，除非需要多个参数
     }
 
     private ResourcesWrapper resources;

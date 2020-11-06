@@ -41,7 +41,7 @@ public class MainViewModel extends BaseViewModel {
                     @Override
                     public void onNext(NetResource<List<Chapter>> list) {
                         super.onNext(list);
-                        chapterListEvent.setValue(list.getData());
+                        chapterListEvent.postValue(list.getData());
                         Timber.e("result -- %s", list);
                     }
                 });

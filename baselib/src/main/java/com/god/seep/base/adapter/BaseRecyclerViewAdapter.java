@@ -1,7 +1,7 @@
 package com.god.seep.base.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;

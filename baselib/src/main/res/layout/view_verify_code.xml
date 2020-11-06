@@ -95,7 +95,7 @@
             android:background="@color/gray_text_light" />
     </LinearLayout>
 
-    <com.chengcheng.zhuanche.customer.widget.VerifyEditText
+    <com.god.seep.base.widget.VerifyEditText
         android:id="@+id/edit_text_view"
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -109,5 +109,5 @@
         android:textColor="@color/transparent">
 
         <requestFocus />
-    </com.chengcheng.zhuanche.customer.widget.VerifyEditText>
+    </com.god.seep.base.widget.VerifyEditText>
 </RelativeLayout>

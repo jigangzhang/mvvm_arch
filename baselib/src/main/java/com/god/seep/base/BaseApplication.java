@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
+
 import timber.log.Timber;
 
 public class BaseApplication extends MultiDexApplication {
@@ -59,6 +60,10 @@ public class BaseApplication extends MultiDexApplication {
                 .detectAll()
                 .penaltyLog()
                 .build());
+    }
+
+    public static BaseApplication getInstance() {
+        return INSTANCE;
     }
 
     public Context getContext() {
