@@ -2,6 +2,7 @@ package com.god.seep.mvvm;
 
 import com.god.seep.base.adapter.BaseRecyclerViewAdapter;
 import com.god.seep.base.arch.view.BaseActivity;
+import com.god.seep.media.ui.main.MediaFragment;
 import com.god.seep.mvvm.databinding.ActivityMainBinding;
 import com.god.seep.mvvm.databinding.ItemChapterBinding;
 
@@ -38,6 +39,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         mBinding.setViewModel(mViewModel);
         setSupportActionBar(mBinding.toolbar);
         mBinding.list.setAdapter(adapter);
+        //直接實例化Fragment
+        MediaFragment.Companion.newInstance();
         mViewModel.getChapterListEvent().observe(this, new Observer<List<Chapter>>() {
             @Override
             public void onChanged(List<Chapter> chapters) {

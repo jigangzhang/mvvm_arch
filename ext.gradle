@@ -12,6 +12,7 @@ ext {
             appcompat          : '1.2.0',
             constraintlayout   : '2.0.4',
             material           : '1.2.1',
+            arouter            : '1.5.1',
             lifecycle_version  : '2.2.0',
             arch_version       : '2.1.0',
             navigation_version : '2.3.1',
@@ -32,6 +33,9 @@ ext {
             appcompat             : [group: 'androidx.appcompat', name: 'appcompat', version: versions.appcompat],
             constraintlayout      : [group: 'androidx.constraintlayout', name: 'constraintlayout', version: versions.constraintlayout],
             material              : [group: 'com.google.android.material', name: 'material', version: versions.material],
+
+            arouter               : [group: 'com.alibaba', name: 'arouter-api', version: versions.arouter],
+            arouter_compiler      : [group: 'com.alibaba', name: 'arouter-compiler', version: versions.arouter],
 
             //##日志框架##
             timber                : [group: 'com.jakewharton.timber', name: 'timber', version: '4.7.1'],

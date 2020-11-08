@@ -1,16 +1,11 @@
 package com.god.seep.base.arch.model.repository;
 
 import com.god.seep.base.arch.model.datasource.HttpState;
-import com.god.seep.base.net.BaseObserver;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class BaseRemoteRepo implements IRepository.IRemoteRepository {

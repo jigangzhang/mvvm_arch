@@ -90,7 +90,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':baselib')
+//    implementation project(':baselib')
+    implementation project(':media')
 
     implementation libs.constraintlayout
     implementation libs.material

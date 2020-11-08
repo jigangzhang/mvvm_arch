@@ -12,8 +12,6 @@ import com.god.seep.base.util.AppManager;
 import com.god.seep.base.util.AppUtil;
 import com.god.seep.base.util.ToastHelper;
 
-import org.greenrobot.eventbus.EventBus;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -113,8 +111,6 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
     @Override
     protected void onResume() {
         super.onResume();
-        if (isBusEnabled())
-            EventBus.getDefault().register(this);
         if (mNetworkChangeReceiver == null)
             mNetworkChangeReceiver = new NetworkChangeReceiver(this::onNetChanged);
         IntentFilter filter = new IntentFilter();
@@ -125,8 +121,6 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
     @Override
     protected void onPause() {
         super.onPause();
-        if (isBusEnabled())
-            EventBus.getDefault().unregister(this);
         if (mNetworkChangeReceiver != null)
             unregisterReceiver(mNetworkChangeReceiver);
     }
