@@ -138,7 +138,19 @@
     TextView：
         要使文本可被选择、复制，则设置 textIsSelectable 为true
         使TextView可编辑的关键是 setText(text, BufferType.EDITABLE)
+        将中文设置成粗体的方法：
+            TextPaint tp = tv.getPaint(); 
+            tp.setFakeBoldText(true);
+        或者：
+            tp.setStyle(Paint.Style.FILL_AND_STROKE);
+            tp.setColor(Color.RED);//字体颜色
+            tp.setStrokeWidth(10);//控制字体加粗的程度
     
+    吸顶效果：
+        自定义View，滑动时计算要固定的View位置，当滑动到固定位置时禁止外部ScrollView滑动，
+        同时将滑动事件继续传递至内部子View
+        待实现与测试；
+        
     TabLayout：
         indicator宽度设置--tabIndicatorFullWidth
     
