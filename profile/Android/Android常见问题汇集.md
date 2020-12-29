@@ -128,6 +128,7 @@
         
     ConstraintLayout：
         约束布局，降低View层级
+		认为不适用场景：动态改变布局的情况，控件根据情况隐藏会打乱布局
     
     ViewStub：
         在布局渲染优化时考虑使用
@@ -213,12 +214,21 @@
         详见：https://developer.android.google.cn/studio/build/multidex#about
         minSdkVersion 设为 21 或更高的值，则默认情况下启用多 dex 文件，并且您不需要多 dex 文件支持库
         multiDexKeepFile、multiDexKeepProguard的使用（将特定类置于主dex中），见官方文档（上述链接）
+	
+	系统安装判断：
+		PRIVATE_FLAG_OEM  PRIVATE_FLAG_VENDOR PRIVATE_FLAG_PRODUCT ，除过这三个 FLAG 的应用，肯定是用户自己安装的，一个 是oem分区  供应商分区  产品分区
+		/frameworks/base/core/java/android/content/pm/ApplicationInfo.java
+		public static final int PRIVATE_FLAG_REQUIRED_FOR_SYSTEM_USER = 1 << 9;
 
 #### Jetpack && Androidx
 
     生命周期：
         使用 LifecycleObserver时，一定要将其注入到某个LifecycleOwner中。
         如Activity中使用ViewModel：getLifecycle().addObserver(mViewModel)
+		
+	ViewModel：
+		同时复用ViewModel时，绑定的生命周期会执行两次。（eg：同一个Activity的多个Fragment中复用）
+		
     Jetpack组件使用协程：
         https://developer.android.google.cn/topic/libraries/architecture/coroutines    
     

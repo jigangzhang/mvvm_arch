@@ -111,6 +111,9 @@ dependencies {
 
     api libs.recyclerview
     api libs.recyclerview_helper
+    api libs.refresh
+    api libs.refresh_header_classics
+    api libs.refresh_footer_classics
 
     api libs.timber
     api libs.logger
