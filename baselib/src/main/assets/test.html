@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Carson</title>
+    <script>
+    function callAndroid() {
+        //由于对象映射，所以调用test对象等于调用Android映射的对象
+        window.android.app_back();
+        window.android.app_share("js调用了android中的 window.android.app_share 方法");
+     }
+
+    </script>
+</head>
+<body>
+点击按钮则调用callAndroid函数
+<button type="button" id="btn_test" onclick="callAndroid()">点我</button>
+</body>
+</html>

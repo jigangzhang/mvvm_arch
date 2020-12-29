@@ -1,4 +1,4 @@
-package com.god.seep.base.image_video;
+package com.god.seep.base.ui.image_video;
 
 import android.text.TextUtils;
 import android.view.View;

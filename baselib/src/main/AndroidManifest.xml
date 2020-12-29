@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application>
-        <activity android:name=".image_video.PagingImageVideoActivity" />
+        <activity android:name=".ui.WebViewActivity" />
+        <activity android:name=".ui.image_video.PagingImageVideoActivity" />
     </application>
 </manifest>
