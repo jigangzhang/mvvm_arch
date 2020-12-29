@@ -10,6 +10,9 @@ import com.god.seep.base.util.AppUtil;
 import com.god.seep.base.util.ExceptionCaught;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,10 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import timber.log.Timber;
 
-public class BaseApplication extends MultiDexApplication {
+/**
+ * android 5.0 已经支持MultiDex，无需继承MultiDexApplication
+ */
+public abstract class BaseApplication extends MultiDexApplication {
     private static BaseApplication INSTANCE;
+    private ExecutorService threadPool;
 
     static {
         SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) -> {
@@ -46,11 +56,14 @@ public class BaseApplication extends MultiDexApplication {
             ExceptionCaught.getInstance(this).init();   //是否要发布到线上版本，接入 Bugly 后可以不需要此项
 //            CrashReport.initCrashReport(this, "AppId", false);
         }
-        if (BuildConfig.DEBUG) {           // 这两行必须写在init之前，否则这些配置在init过程中将无效
-            ARouter.openLog();     // 打印日志
-            ARouter.openDebug();   // 开启调试模式(如果在InstantRun模式下运行，必须开启调试模式！线上版本需要关闭,否则有安全风险)
-        }
-        ARouter.init(this);
+        initInMainProcess();
+        threadPool = Executors.newCachedThreadPool();
+    }
+
+    public abstract void initInMainProcess();
+
+    public ExecutorService getThreadPool() {
+        return threadPool;
     }
 
     private void initLog() {

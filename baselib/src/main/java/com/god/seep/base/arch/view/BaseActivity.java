@@ -1,11 +1,14 @@
 package com.god.seep.base.arch.view;
 
+import android.app.Dialog;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.View;
 
 import com.god.seep.base.BaseApplication;
+import com.god.seep.base.R;
 import com.god.seep.base.arch.viewmodel.BaseViewModel;
 import com.god.seep.base.receiver.NetworkChangeReceiver;
 import com.god.seep.base.util.AppManager;
@@ -33,10 +36,16 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
     private NetworkChangeReceiver mNetworkChangeReceiver;
     protected D mBinding;
     protected VM mViewModel;
+    private Dialog mLoadingDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //优化白色状态栏显示效果，非白色可去掉
+        int uiVisibility = getWindow().getDecorView().getSystemUiVisibility();
+        uiVisibility = uiVisibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        getWindow().getDecorView().setSystemUiVisibility(uiVisibility);
+
         initBinding();
         initViewModel();
         initData();
@@ -62,7 +71,7 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
         registerEvent();
     }
 
-    private void registerEvent() {
+    private void initEvent() {
         mViewModel.getLoadingEvent().observe(this, showLoading -> {
             Timber.e("loading -- %s", showLoading);
             if (showLoading) {
@@ -72,25 +81,30 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
             }
         });
         mViewModel.getHttpState().observe(this, httpState -> {
+            String msg = httpState.getMsg();
+            boolean showLoading = httpState.isShowLoading();
             switch (httpState.getState()) {
                 case OnLoading:
-                    showLoading();
+                    if (showLoading)
+                        showLoading();
                     break;
                 case OnLoadComplete:
-                    hideLoading();
+                    if (showLoading)
+                        hideLoading();
                     break;
                 case Success:
                     break;
                 case LoginInvalid:
-                    loginInvalid(null);
+                    loginInvalid(msg);
                     break;
                 case Failed:   //Failure包括：接口请求成功，但是返回false；接口请求失败--包括以下情况
+                    ToastHelper.showToast(BaseActivity.this, msg);
                     break;
                 case NetError:
                     ToastHelper.showToast(BaseActivity.this, "网络错误");
                     break;
                 case ClientError:
-                    ToastHelper.showToast(BaseActivity.this, "client error");
+                    ToastHelper.showToast(BaseActivity.this, "客户端错误");
                     break;
                 case ServerError:
                     ToastHelper.showToast(BaseActivity.this, "服务器错误");
@@ -101,11 +115,12 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
             }
             Timber.e("net state -- %s", httpState.getState());
         });
+        registerEvent();
     }
 
     @Override
     public void loginInvalid(String errCode) {
-
+        //清除登录信息，跳转登录页面
     }
 
     @Override
@@ -166,11 +181,19 @@ public abstract class BaseActivity<D extends ViewDataBinding, VM extends BaseVie
     }
 
     protected void showLoading() {
-
+        if (mLoadingDialog == null) {
+            mLoadingDialog = new Dialog(this);
+            mLoadingDialog.getWindow().setBackgroundDrawableResource(R.color.transparent);
+//            mLoadingDialog.setContentView(R.layout.dialog_loading);
+        }
+        if (!mLoadingDialog.isShowing())
+            mLoadingDialog.show();
     }
 
     protected void hideLoading() {
-
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
     }
 
     public <T extends ViewModel> T getViewModel(@NonNull Class<T> clz) {

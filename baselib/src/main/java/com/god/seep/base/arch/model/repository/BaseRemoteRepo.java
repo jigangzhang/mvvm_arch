@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class BaseRemoteRepo implements IRepository.IRemoteRepository {
+public class BaseRemoteRepo implements CommonRepository.IRemoteRepository {
     private MutableLiveData<HttpState> httpState;
 
     public BaseRemoteRepo(MutableLiveData<HttpState> httpState) {

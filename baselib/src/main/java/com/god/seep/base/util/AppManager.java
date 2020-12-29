@@ -1,13 +1,14 @@
 package com.god.seep.base.util;
 
-import android.app.Activity;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Stack;
 
 public class AppManager {
     private static final String TAG = "AppManager";
-    private Stack<Activity> mStack;
+    private Stack<AppCompatActivity> mStack;
     private static AppManager mInstance;
 
     private AppManager() {
@@ -24,7 +25,7 @@ public class AppManager {
     /**
      * 将Activity加到向量末端
      */
-    public void register(Activity activity) {
+    public void register(AppCompatActivity activity) {
         if (mStack != null)
             mStack.add(activity);
     }
@@ -32,15 +33,28 @@ public class AppManager {
     /**
      * 将Activity从向量中移除
      */
-    public void unregister(Activity activity) {
+    public void unregister(AppCompatActivity activity) {
         if (mStack != null)
             mStack.remove(activity);
+    }
+
+    public AppCompatActivity getTopActivity() {
+        int size = mStack.size();
+        if (size == 0)
+            return null;
+        for (int i = size - 1; i >= 0; i--) {
+            AppCompatActivity activity = mStack.get(i);
+            if (activity != null && !activity.isDestroyed()) {
+                return activity;
+            }
+        }
+        return null;
     }
 
     /**
      * Activity 入栈
      */
-    public void push(Activity activity) {
+    public void push(AppCompatActivity activity) {
         mStack.push(activity);
     }
 
@@ -56,7 +70,7 @@ public class AppManager {
      * 销毁某个 Activity
      */
     public void destroyActivity(Class<?> cls) {
-        for (Activity activity : mStack) {
+        for (AppCompatActivity activity : mStack) {
             if (cls.getName().equals(activity.getClass().getName())) {
                 unregister(activity);
                 activity.finish();
@@ -67,7 +81,7 @@ public class AppManager {
 
     private void destroyAll() {
         if (mStack != null)
-            for (Activity activity : mStack) {
+            for (AppCompatActivity activity : mStack) {
                 Log.e(TAG, "activity--" + activity.getClass().getName());
                 unregister(activity);
                 activity.finish();

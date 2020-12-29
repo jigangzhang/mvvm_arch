@@ -1,10 +1,13 @@
 package com.god.seep.base.net;
 
 import com.god.seep.base.arch.model.datasource.HttpState;
+import com.god.seep.base.arch.model.datasource.NetResource;
 
 import java.io.IOException;
 
 import androidx.lifecycle.MutableLiveData;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.ResourceObserver;
@@ -30,7 +33,7 @@ import timber.log.Timber;
  * 必须放在UI线程执行，Flowable可实现FlowableSubscriber接口使用
  * </p>
  */
-public class BaseObserver<T> extends ResourceObserver<T> {
+public abstract class BaseObserver<D> extends ResourceObserver<NetResource<D>> {
     private CompositeDisposable disposable;
     private MutableLiveData<HttpState> httpState;
     private boolean showLoading;
@@ -42,15 +45,33 @@ public class BaseObserver<T> extends ResourceObserver<T> {
     }
 
     @Override
-    public void onNext(T t) {
-        httpState.postValue(HttpState.SUCCESS);
+    public void onNext(@NotNull NetResource<D> t) {
+        int code = t.getErrorCode();
+        switch (code) {
+            case 0:
+                //
+                httpState.setValue(HttpState.SUCCESS);
+                onSuccess(t.getData());
+                break;
+            case 401:
+//                LoginManager.getInstance().loginOut();
+                httpState.setValue(HttpState.error(HttpState.State.LoginInvalid, "登录失效，请重新登录"));
+                break;
+            default:
+                httpState.setValue(HttpState.error(HttpState.State.Failed, t.getErrorMsg()));
+                onFailure(code, t.getErrorMsg());
+        }
+    }
+
+    public abstract void onSuccess(D data);
+
+    public void onFailure(int code, String message) {
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (showLoading)
-            httpState.postValue(HttpState.LOADING);
+        httpState.setValue(HttpState.loading(showLoading));
         if (disposable != null)
             disposable.add(this);
     }
@@ -60,36 +81,42 @@ public class BaseObserver<T> extends ResourceObserver<T> {
      */
     @Override
     public void onError(Throwable e) {
-        httpState.postValue(HttpState.error(e.getMessage()));
+        httpState.setValue(HttpState.error(e.getMessage()));
         if (e instanceof IOException) {
 //            if (TextUtils.equals(e.getMessage(), "Canceled")) return;
 //            if (TextUtils.equals(e.getMessage(), "Socket closed")) return;
 //            if (TextUtils.equals(e.getMessage(), "stream was reset: CANCEL")) return;
-            httpState.postValue(HttpState.error(HttpState.State.NetError, e.getMessage()));
+            httpState.setValue(HttpState.error(HttpState.State.NetError, e.getMessage()));
+            onNetError(e);
             Timber.e(e, "IO 错误，error message：%s", e.getMessage());
         } else if (e instanceof HttpException) {
             int code = ((HttpException) e).code();
             if (code == 401) {
                 Timber.e("401 authentication");
             } else if (code >= 400 && code < 500) {
-                httpState.postValue(HttpState.error(HttpState.State.ClientError, e.getMessage()));
+                httpState.setValue(HttpState.error(HttpState.State.ClientError, e.getMessage()));
             } else if (code >= 500 && code < 600) {
-                httpState.postValue(HttpState.error(HttpState.State.ServerError, e.getMessage()));
+                httpState.setValue(HttpState.error(HttpState.State.ServerError, e.getMessage()));
             } else {
-                httpState.postValue(HttpState.error(HttpState.State.UnexpectedError, e.getMessage()));
+                httpState.setValue(HttpState.error(HttpState.State.UnexpectedError, e.getMessage()));
             }
             Timber.e(e, "http code = %s，error message：%s", code, e.getMessage());
         } else {
-            httpState.postValue(HttpState.error(HttpState.State.UnexpectedError, e.getMessage()));
+            httpState.setValue(HttpState.error(HttpState.State.UnexpectedError, e.getMessage()));
             Timber.e(e, "未知错误");
         }
         onComplete();
     }
 
+    protected void onNetError(Throwable e) {
+    }
+
+    /**
+     * onComplete 在 onNext 之后执行，即是在数据业务处理之后才会隐藏loading
+     */
     @Override
     public void onComplete() {
-        if (showLoading)
-            httpState.postValue(HttpState.LOADCOMPLETE);
+        httpState.setValue(HttpState.LoadComplete(showLoading));
         if (disposable != null)
             disposable.remove(this);
     }

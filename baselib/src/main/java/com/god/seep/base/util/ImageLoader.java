@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.god.seep.base.R;
 
 import androidx.annotation.DrawableRes;
 import androidx.fragment.app.Fragment;
@@ -121,6 +122,10 @@ public class ImageLoader {
      */
     public static void loadImage(Context context, String url, ImageView view, boolean centerCrop) {
 //        loadImage(context, url, view, centerCrop, null, 0, R.drawable.ic_car_economy_normal);
+    }
+
+    public static void loadImage(Context context, String url, ImageView view, BitmapTransformation transform, boolean centerCrop) {
+        loadImage(context, url, view, centerCrop, transform, R.color.blue_shadow, R.color.blue_shadow);
     }
 
     public static void loadImage(Context context, String url, ImageView view, BitmapTransformation transform, @DrawableRes int resId) {

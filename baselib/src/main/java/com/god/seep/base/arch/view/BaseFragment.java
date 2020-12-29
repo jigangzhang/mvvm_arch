@@ -1,5 +1,6 @@
 package com.god.seep.base.arch.view;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.god.seep.base.BaseApplication;
+import com.god.seep.base.R;
 import com.god.seep.base.arch.viewmodel.BaseViewModel;
 import com.god.seep.base.util.ToastHelper;
 
@@ -26,6 +28,8 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
     protected VM mViewModel;
     protected Context mContext;
     private View mRootView;
+    private Dialog mLoadingDialog;
+    protected int requestCount = 0;
 
     /**
      * /**生命周期： setUserVisibleHint -> onCreate -> onCreateView -> setUserVisibleHint
@@ -48,6 +52,14 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
 
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            //fragment可见
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,7 +77,7 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
             mViewModel = (VM) getViewModel(BaseViewModel.class);
         }
         getLifecycle().addObserver(mViewModel);
-        registerEvent();
+        initEvent();
     }
 
     @Override
@@ -74,7 +86,7 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
         initData();
     }
 
-    private void registerEvent() {
+    private void initEvent() {
         mViewModel.getLoadingEvent().observe(this, showLoading -> {
                     if (showLoading) {
                         showLoading();
@@ -84,25 +96,33 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
                 }
         );
         mViewModel.getHttpState().observe(this, httpState -> {
+            String msg = httpState.getMsg();
+            boolean showLoading = httpState.isShowLoading();
             switch (httpState.getState()) {
                 case OnLoading:
-                    showLoading();
+                    requestCount++;
+                    if (showLoading)
+                        showLoading();
                     break;
                 case OnLoadComplete:
-                    hideLoading();
+                    requestCount--;
+                    if (showLoading)
+                        hideLoading();
+                    onLoadComplete();
                     break;
                 case Success:
                     break;
                 case LoginInvalid:
-                    loginInvalid(null);
+                    loginInvalid(msg);
                     break;
                 case Failed:       //Failure包括：接口请求成功，但是返回false；接口请求失败--包括以下情况
+                    ToastHelper.showToast(mContext, msg);
                     break;
                 case NetError:
                     ToastHelper.showToast(mContext, "网络错误");
                     break;
                 case ClientError:
-                    ToastHelper.showToast(mContext, "client error");
+                    ToastHelper.showToast(mContext, "客户端错误");
                     break;
                 case ServerError:
                     ToastHelper.showToast(mContext, "服务器错误");
@@ -112,11 +132,15 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
                     break;
             }
         });
+        registerEvent();
+    }
+
+    protected void onLoadComplete() {
     }
 
     @Override
     public void loginInvalid(String errCode) {
-
+        //登录失效，清除数据，跳转登录页
     }
 
     @Override
@@ -125,11 +149,19 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
     }
 
     protected void showLoading() {
-
+        if (mLoadingDialog == null) {
+            mLoadingDialog = new Dialog(getContext());
+            mLoadingDialog.getWindow().setBackgroundDrawableResource(R.color.transparent);
+//            mLoadingDialog.setContentView(R.layout.dialog_loading);
+        }
+        if (!mLoadingDialog.isShowing())
+            mLoadingDialog.show();
     }
 
     protected void hideLoading() {
-
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
     }
 
     public <T extends ViewModel> T getViewModel(@NonNull Class<T> clz) {

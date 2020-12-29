@@ -103,11 +103,18 @@ task resolveCompileSources {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api libs.appcompat
+    api libs.material
+    api libs.constraintlayout
     api libs.arouter
     annotationProcessor libs.arouter_compiler
 
+    api libs.video_player
+    api libs.photo_view
+
     api libs.viewmodel
     api libs.liveData
+    api libs.lifecycle_process
+    api libs.reactivestreams
 
     api libs.recyclerview
     api libs.recyclerview_helper
@@ -125,6 +132,7 @@ dependencies {
     api libs.retrofit_gson
     api libs.retrofit_rxjava
     api libs.okhttp
+    api libs.okhttp_logger
 
     api libs.rxjava
     api libs.rxandroid
@@ -132,6 +140,7 @@ dependencies {
 
     api libs.glide
     annotationProcessor libs.glide_compiler
+    api libs.circle_imageview
 
     //使用Chrome来调试Android Application的工具
     implementation libs.stetho

@@ -129,4 +129,27 @@
     <declare-styleable name="SideBar">
         <attr name="side_textSize" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="CustomIndicatorView">
+        <attr name="size" format="integer" />
+        <attr name="selectedColor" format="color" />
+        <attr name="unSelectedColor" format="color" />
+        <attr name="diameter" format="dimension" />
+        <attr name="indicatorSpace" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="Banner">
+        <attr name="autoPlay" format="boolean" />
+        <attr name="playDuration" format="integer" />
+        <attr name="showIndicator" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CountDownView">
+        <attr name="mainColor" format="color" />
+        <attr name="minorColor" format="color" />
+        <attr name="showType" format="enum">
+            <enum name="TYPE_ONE" value="1" />
+            <enum name="TYPE_TWO" value="2" />
+        </attr>
+    </declare-styleable>
 </resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="isVideo"
+            type="Boolean" />
+
+        <variable
+            name="url"
+            type="String" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:visibility="@{isVideo ? View.GONE : View.VISIBLE}" />
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:visibility="@{isVideo ? View.VISIBLE : View.GONE}"
+            app:controller_layout_id="@layout/video_player_control_view"
+            app:resize_mode="fit" />
+    </FrameLayout>
+</layout>

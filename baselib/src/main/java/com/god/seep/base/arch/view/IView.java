@@ -28,12 +28,19 @@ public interface IView<VM extends BaseViewModel> {
     void initData();
 
     /**
+     * 注册LiveData事件
+     */
+    void registerEvent();
+
+    /**
      * 登录失效
      */
     void loginInvalid(String errCode);
 
     /**
-     * 是否注册 EventBus
+     * 是否注册 EventBus，可去掉，已使用Live-event-bus替换，无效注册
+     *
+     * @deprecated 待删除
      */
     boolean isBusEnabled();
 }
