@@ -56,6 +56,8 @@
         rename('classes.jar', 'XXX.jar')        //如果有资源文件，同时会生成AAR文件，在 build/outputs/aar 路径下
     }
 
+##### [嵌套滑动机制](profile/Android/嵌套滑动.md)
+
 ## NDK系列
 
 ##### [CMakeList.txt 配置](profile/NDK/CMakeList配置.md)

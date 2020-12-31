@@ -163,6 +163,7 @@
     
     RecyclerView：
         数据错乱，一般是由ViewHolder的复用引起的，可由设置tag等方式解决；
+        为item设置tag并设置动画为null时可解决图片闪烁的问题；
         item图片闪烁，也是由ViewHolder的复用引起view重绘等，解决：setHasStableIds(true)、复写getItemId、notifyItemChanged，具体原因待看源码；
             // Find from scrap/cache via stable ids, if exists
             if (mAdapter.hasStableIds()) {
@@ -179,7 +180,20 @@
         ((LinearLayoutManager) mBinding.list.getLayoutManager()).scrollToPositionWithOffset(i, 0);    
         list.scrollToPosition(i)，只是使某一项滑动至可见
  	https://developer.android.com/topic/performance/vitals/render#common-jank（官方建议优化点）
-    
+
+    沉浸式状态栏：
+        flag详解：https://blog.csdn.net/qq_34895720/article/details/103288339
+        能够造成SystemUI Flag被系统自动清除的交互分类：
+            触摸屏幕任何位置
+            顶部下拉状态栏
+            底部上拉导航栏
+            Window的变化(如：跳转到其他界面、弹出键盘等)
+        SYSTEM_UI_FLAG_FULLSCREEN |SYSTEM_UI_FLAG_LAYOUT_STABLE，会同时隐藏Actionbar和StatusBar，但StatusBar所占空间不会隐藏，只会变成空白，加上SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN，View所在window的显示范围则会伸展到StatusBar所在的空间。同样对NavigationBar如此操作，也会是一样的效果
+        设置了SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN时，配合SYSTEM_UI_FLAG_LAYOUT_STABLE，若此时设置或取消SYSTEM_UI_FLAG_FULLSCREEN，不会因为StatusBar的显示或隐藏不会造成内容view的不稳定
+        WindowManager.LayoutParams.FLAG_FULLSCREEN（而不是使用SYSTEM_UI_FLAG_FULLSCREEN）来隐藏StatusBar是一个一直持续隐藏的状态。这时你仍然可以使用SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_STABLE隐藏Actionbar，并且不会因为ActionBar的显示或隐藏而不稳定
+        fitSystemWindow，只有设置了View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION或View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN，View的 fitSystemWindow=true才会有效果
+        其他具体见链接
+
 #### 常见场景
 
     Activity与Fragment之间通信：
