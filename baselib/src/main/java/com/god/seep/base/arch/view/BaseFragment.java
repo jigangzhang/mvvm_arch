@@ -52,13 +52,54 @@ public abstract class BaseFragment<D extends ViewDataBinding, VM extends BaseVie
 
     }
 
+    private boolean isPageStarted;
+    private boolean statisticEnabled = true;
+
+    /**
+     * 调用该方法使友盟统计不可用
+     */
+    protected void disableStatistic() {
+        this.statisticEnabled = false;
+    }
+
+    /**
+     *以下可作为判断页面可见性以及页面切换的逻辑
+     */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden) {
-            //fragment可见
+        if (hidden) {
+            if (isPageStarted && statisticEnabled) {
+                isPageStarted = false;
+//                MobclickAgent.onPageEnd(pageName());
+            }
+        } else {
+            if (!isPageStarted && statisticEnabled) {
+                isPageStarted = true;
+//                MobclickAgent.onPageStart(pageName());
+            }
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isPageStarted && statisticEnabled && !isHidden()) {
+            isPageStarted = true;
+//            MobclickAgent.onPageStart(pageName()); //统计页面("MainScreen"为页面名称，可自定义)
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (isPageStarted && statisticEnabled) {
+            isPageStarted = false;
+//            MobclickAgent.onPageEnd(pageName());
+        }
+    }
+
+//    protected abstract String pageName();
 
     @Nullable
     @Override
