@@ -13,6 +13,9 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:${build_version.gradle}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("com.tencent.matrix:matrix-gradle-plugin:${build_version.matrixVersion}") {
+            changing = true
+        }
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

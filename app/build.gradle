@@ -1,4 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.tencent.matrix-plugin'
+
+matrix {
+    trace {
+//        enable = true     //if you don't want to use trace canary, set false
+        baseMethodMapFile = "${project.buildDir}/matrix_output/Debug.methodmap"
+        blackListFile = "${project.projectDir}/matrixTrace/blackMethodList.txt"
+    }
+}
 
 android {
     def prop = new Properties()

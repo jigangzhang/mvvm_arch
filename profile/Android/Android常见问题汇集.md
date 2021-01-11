@@ -3,6 +3,7 @@
 
     常见问题汇集
     View相关问题
+    混淆参考：https://www.jianshu.com/p/f67ac2b52813
 
 #### 问题解决思路
 

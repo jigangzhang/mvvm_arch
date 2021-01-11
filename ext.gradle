@@ -6,7 +6,8 @@ ext {
             minSdkVersion    : 21,
             targetSdkVersion : 30,
             versionCode      : 1,
-            versionName      : '0.0.1'
+            versionName      : '0.0.1',
+            matrixVersion    : '0.6.6'
     ]
 
     versions = [
@@ -36,6 +37,8 @@ ext {
             appcompat              : [group: 'androidx.appcompat', name: 'appcompat', version: versions.appcompat],
             constraintlayout       : [group: 'androidx.constraintlayout', name: 'constraintlayout', version: versions.constraintlayout],
             material               : [group: 'com.google.android.material', name: 'material', version: versions.material],
+            //流式布局
+            flexbox                : [group: 'com.google.android', name: 'flexbox', version: '2.0.1'],
 
             arouter                : [group: 'com.alibaba', name: 'arouter-api', version: versions.arouter],
             arouter_compiler       : [group: 'com.alibaba', name: 'arouter-compiler', version: versions.arouter],

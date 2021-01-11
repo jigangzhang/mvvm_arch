@@ -150,6 +150,15 @@ dependencies {
 
     debugApi libs.leakcanary_debug
 
+    //APM工具，最后放在app模块
+    api group: "com.tencent.matrix", name: "matrix-android-lib", version: build_version.matrixVersion, changing: true
+    api group: "com.tencent.matrix", name: "matrix-android-commons", version: build_version.matrixVersion, changing: true
+    api group: "com.tencent.matrix", name: "matrix-trace-canary", version: build_version.matrixVersion, changing: true
+    api group: "com.tencent.matrix", name: "matrix-resource-canary-android", version: build_version.matrixVersion, changing: true
+    api group: "com.tencent.matrix", name: "matrix-resource-canary-common", version: build_version.matrixVersion, changing: true
+    api group: "com.tencent.matrix", name: "matrix-io-canary", version: build_version.matrixVersion, changing: true
+    api group: "com.tencent.matrix", name: "matrix-sqlite-lint-android-sdk", version: build_version.matrixVersion, changing: true
+
     testImplementation tests.junit
     testImplementation tests.mockito
     androidTestImplementation tests.runner
