@@ -39,7 +39,7 @@ public class CustomIndicatorView extends View {
         size = typedArray.getInt(R.styleable.CustomIndicatorView_size, 0);
         int diameter = typedArray.getDimensionPixelSize(R.styleable.CustomIndicatorView_diameter, ScreenHelper.dp2Px(context, 6));
         radius = diameter / 2;
-        indicatorSpace = typedArray.getDimensionPixelSize(R.styleable.CustomIndicatorView_indicatorSpace, ScreenHelper.dp2Px(context, 5));
+        indicatorSpace = typedArray.getDimensionPixelSize(R.styleable.CustomIndicatorView_betweenSpace, ScreenHelper.dp2Px(context, 5));
         selectedColor = typedArray.getColor(R.styleable.CustomIndicatorView_selectedColor, context.getResources().getColor(R.color.colorAccent));
         unselectedColor = typedArray.getColor(R.styleable.CustomIndicatorView_unSelectedColor, context.getResources().getColor(R.color.white));
         typedArray.recycle();

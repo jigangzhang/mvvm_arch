@@ -24,7 +24,7 @@ public class MainRepository extends BaseRemoteRepo {
 //        Observable execute = execute(getWebService(WebService.class, Api.Url_WanAndroid)
 //                .getChapters(), true);
 //        return execute;
-        Observable<NetResource<List<Chapter>>> observable = getWebService(WebService.class, Api.Url_WanAndroid)
+        Observable<NetResource<List<Chapter>>> observable = getWebService(WebService.class, Api.BaseUrl_WanAndroid)
                 .getChapters()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

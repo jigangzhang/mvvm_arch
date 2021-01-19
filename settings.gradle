@@ -1,2 +1,97 @@
 include ':media'
 include ':app', ':baselib'
+
+//其他目录下的项目配置
+//include 'video' 不要加 : 符号
+//project(:video).projectDir = new File("..\\libs\\video")
+
+/**
+ * gradle构建执行的三个生命周期：初始化--配置--执行
+ * 初始化：解析settings.gradle，构造一个Settings实例（对应Settings接口），为每个包含的每个项目（include:':app' 等）实例化一个Project， 详解： https://juejin.cn/post/6917486983946338318
+ * 配置阶段：解析每个项目中的build.gradle以及依赖的gradle插件，完成 Project配置和 Task配置，以及创建Task依赖的有向无环图
+ * 执行阶段：根据Task依赖关系（生成的有向无环图）依次执行Task动作
+ */
+def beginSettings = System.currentTimeMillis()
+def beginOfConfig = false
+def configHasBegin = false
+def beginProjectConfig = new HashMap()
+def beginProjectExecute
+
+gradle.addBuildListener(new BuildListener() {
+
+    @Override
+    void beforeSettings(Settings settings) {
+        println('Settings 之前')
+        super.beforeSettings(settings)
+    }
+
+    @Override
+    void buildStarted(Gradle gradle) {
+        println('---构建开始---')
+    }
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+        // 注意：在这里不能访问 var1.gradle.rootProject，因为 Project 还没有初始化
+        println 'settings.gradle 解析完成'
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+        println 'project 加载完毕，初始化阶段结束'
+        println "初始化阶段耗时：${System.currentTimeMillis() - beginSettings}ms"
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+        println 'project 解析完毕，配置阶段结束'
+    }
+
+    @Override
+    void buildFinished(BuildResult buildResult) {
+        println '---构建结束---'
+        // 如果工程中包含 buildSrc 目录，对 buildSrc 项目的构建在这里会 beginOfProjectExecute 空指针
+        if (null != beginProjectExecute) {
+            println "执行阶段结束，总耗时：${System.currentTimeMillis() - beginProjectExecute}ms"
+        }
+    }
+})
+
+gradle.beforeProject {
+    if (!configHasBegin) {
+        configHasBegin = true
+        beginOfConfig = System.currentTimeMillis()
+    }
+    beginProjectConfig.put(it, System.currentTimeMillis())
+}
+
+gradle.afterProject {
+    def begin = beginProjectConfig.get(it)
+    println "project 配置 ${it.toString()}，耗时：${System.currentTimeMillis() - begin}ms"
+}
+
+gradle.taskGraph.whenReady {
+    println "【taskGraph.whenReady】 配置阶段结束，总耗时：${System.currentTimeMillis() - beginOfConfig}ms"
+    beginProjectExecute = System.currentTimeMillis()
+}
+
+gradle.taskGraph.beforeTask { task ->
+    task.doFirst {
+        task.ext.beginOfTask = System.currentTimeMillis()
+    }
+    task.doLast {
+        println "执行Task【${task.name}】，耗时：${System.currentTimeMillis() - task.beginOfTask}ms"
+    }
+}
+
+gradle.taskGraph.addTaskExecutionGraphListener(new TaskExecutionGraphListener() {
+    @Override
+    void graphPopulated(TaskExecutionGraph taskExecutionGraph) {
+        println 'Task 有向无环图生成'
+        def sb = new StringBuilder()
+        taskExecutionGraph.allTasks.forEach() {
+            sb.append(it.name).append(' ')
+        }
+        println "所有的Task：${sb.toString()}"
+    }
+})

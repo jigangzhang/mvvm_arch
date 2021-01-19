@@ -1,0 +1,41 @@
+plugins {
+    id 'groovy' // （必选）用于实现插件
+    id 'maven' // 用于发布插件
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main/groovy'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+/**
+ * groupId	组织 / 公司名称
+ * artifactId	项目 / 模块名称
+ * version	项目 / 模块的当前版本号
+ */
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //发布远程仓库
+//            repository(url: RELEASE_URL) {
+//                authentication(userName: "seep", password: "xxx")
+//            }
+            //发布本地仓库
+            repository(url: uri('../repo'))
+            pom.groupId = 'seep_groupId'
+            pom.artifactId = 'seep_artifactId'
+            pom.version = '1.0.0'
+        }
+    }
+}

@@ -1,11 +1,19 @@
 package com.god.seep.base.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Build;
+import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  *
@@ -15,7 +23,7 @@ public class WebUtil {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    public static void settingRichTextWebView(WebView webView) {
+    public static void settingRichTextWebView(WebView webView, Activity activity) {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         //支持自动适配
@@ -49,11 +57,35 @@ public class WebUtil {
                 return false;
             }
         });
-        webView.setWebChromeClient(new WebChromeClient());
         //不加这个图片显示不出来
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
+        //webView播放视频设置，需要放在Activity中
+        webView.setWebChromeClient(new WebChromeClient() {
+            private View webVideo;
+
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                webVideo = view;
+                view.setBackgroundColor(Color.BLACK);
+//                mBinding.llContent.setVisibility(GONE);
+//                mBinding.videoContainer.addView(view);
+                super.onShowCustomView(view, callback);
+            }
+
+            @Override
+            public void onHideCustomView() {
+                //视频不播放时返回键可能不触发这个回调
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                mBinding.videoContainer.removeView(webVideo);
+//                mBinding.llContent.setVisibility(VISIBLE);
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                super.onHideCustomView();
+            }
+        });
     }
 
     @SuppressLint("SetJavaScriptEnabled")

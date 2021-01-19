@@ -37,14 +37,13 @@ public class MainViewModel extends BaseViewModel {
     }
 
     public void getChapters() {
-        BaseObserver<NetResource<List<Chapter>>> subscribe = mainRepo
+        BaseObserver<List<Chapter>> subscribe = mainRepo
                 .getChapters()
-                .subscribeWith(new BaseObserver<NetResource<List<Chapter>>>(compositeDisposable, getHttpState(), true) {
+                .subscribeWith(new BaseObserver<List<Chapter>>(compositeDisposable, getHttpState(), true) {
                     @Override
-                    public void onNext(NetResource<List<Chapter>> list) {
-                        super.onNext(list);
-                        chapterListEvent.postValue(list.getData());
-                        Timber.e("result -- %s", list);
+                    public void onSuccess(List<Chapter> data) {
+                        chapterListEvent.postValue(data);
+                        Timber.e("result -- %s", data);
                     }
                 });
     }

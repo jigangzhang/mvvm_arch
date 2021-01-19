@@ -1,5 +1,6 @@
 package com.god.seep.base;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.StrictMode;
@@ -28,7 +29,7 @@ import timber.log.Timber;
 /**
  * android 5.0 已经支持MultiDex，无需继承MultiDexApplication
  */
-public abstract class BaseApplication extends MultiDexApplication {
+public abstract class BaseApplication extends Application {
     private static BaseApplication INSTANCE;
     private ExecutorService threadPool;
 

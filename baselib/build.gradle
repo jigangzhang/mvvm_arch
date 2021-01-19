@@ -1,5 +1,18 @@
 apply plugin: 'com.android.library'
 
+println '配置 baselib project'
+
+//task有：属性、动作、依赖、配置
+task buildTest {
+    println 'Test Task 配置'
+    doFirst {
+        println 'Test Task doFirst'
+    }
+    doLast {
+        println 'Test Task doFirst'
+    }
+}
+
 android {
     compileSdkVersion build_version.compileSdkVersion
 

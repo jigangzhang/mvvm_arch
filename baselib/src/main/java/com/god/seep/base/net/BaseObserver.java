@@ -1,13 +1,13 @@
 package com.god.seep.base.net;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.god.seep.base.arch.model.datasource.HttpState;
 import com.god.seep.base.arch.model.datasource.NetResource;
 
-import java.io.IOException;
-
-import androidx.lifecycle.MutableLiveData;
-
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.ResourceObserver;
@@ -49,23 +49,22 @@ public abstract class BaseObserver<D> extends ResourceObserver<NetResource<D>> {
         int code = t.getErrorCode();
         switch (code) {
             case 0:
-                //
                 httpState.setValue(HttpState.SUCCESS);
                 onSuccess(t.getData());
                 break;
             case 401:
-//                LoginManager.getInstance().loginOut();
+                //清理登录信息
                 httpState.setValue(HttpState.error(HttpState.State.LoginInvalid, "登录失效，请重新登录"));
                 break;
             default:
-                httpState.setValue(HttpState.error(HttpState.State.Failed, t.getErrorMsg()));
-                onFailure(code, t.getErrorMsg());
+                onFailure(t.getErrorCode(), t.getErrorMsg());
         }
     }
 
     public abstract void onSuccess(D data);
 
     public void onFailure(int code, String message) {
+        httpState.setValue(HttpState.error(HttpState.State.Failed, message));
     }
 
     @Override

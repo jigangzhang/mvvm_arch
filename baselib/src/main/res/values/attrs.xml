@@ -85,10 +85,10 @@
     </declare-styleable>
 
     <declare-styleable name="IndicatorView">
-        <attr name="size" format="integer" />
-        <attr name="diameter" format="dimension" />
-        <attr name="selectedColor" format="color" />
-        <attr name="unSelectedColor" format="color" />
+        <attr name="num" format="integer" />
+        <attr name="radius" format="dimension" />
+        <attr name="accentColor" format="color" />
+        <attr name="normalColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="PageIndicatorView">
@@ -135,7 +135,7 @@
         <attr name="selectedColor" format="color" />
         <attr name="unSelectedColor" format="color" />
         <attr name="diameter" format="dimension" />
-        <attr name="indicatorSpace" format="dimension" />
+        <attr name="betweenSpace" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="Banner">

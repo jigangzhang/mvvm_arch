@@ -31,10 +31,10 @@ public class IndicatorView extends LinearLayout {
 
     private void init(AttributeSet attrs, int defStyle) {
         TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.IndicatorView, defStyle, 0);
-        int size = array.getInt(R.styleable.IndicatorView_size, 0);
-        float diameter = array.getDimension(R.styleable.IndicatorView_diameter, ScreenHelper.dp2Px(getContext(), 11));
-        int selectedColor = array.getColor(R.styleable.IndicatorView_selectedColor, getContext().getResources().getColor(R.color.white));
-        int unSelectedColor = array.getColor(R.styleable.IndicatorView_unSelectedColor, getContext().getResources().getColor(R.color.white));
+        int size = array.getInt(R.styleable.IndicatorView_num, 0);
+        float diameter = 2 * array.getDimension(R.styleable.IndicatorView_radius, ScreenHelper.dp2Px(getContext(), 5));
+        int selectedColor = array.getColor(R.styleable.IndicatorView_accentColor, getContext().getResources().getColor(R.color.white));
+        int unSelectedColor = array.getColor(R.styleable.IndicatorView_normalColor, getContext().getResources().getColor(R.color.white));
         array.recycle();
 
         mUnSelectDrawable = new GradientDrawable();
