@@ -148,6 +148,29 @@
             tp.setStyle(Paint.Style.FILL_AND_STROKE);
             tp.setColor(Color.RED);//字体颜色
             tp.setStrokeWidth(10);//控制字体加粗的程度
+
+    富文本：
+        两种实现方式，Html.fromHtml 和 WebView
+        1、Html.fromHtml加载图片时需要实现ImageGetter（加载图片），获取标签
+           图片需要异步加载，且加载完毕后需要重新setText，多图片时最好加载完所有图片后再setText
+        2、webView.loadDataWithBaseURL(null,data, "text/html" , "utf-8", null);//加载html数据
+           隐藏滑动条
+           <WebView
+               android:scrollbars="none"
+               android:overScrollMode="never"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+           </WebView>
+           屏蔽缩放功能
+           WebSettings webSettings = mWebView.getSettings();
+           webSettings.setJavaScriptEnabled(true);//允许使用js
+           //不支持屏幕缩放
+           webSettings.setSupportZoom(false);
+           webSettings.setBuiltInZoomControls(false);
+           //不显示webView缩放按钮
+           webSettings.setDisplayZoomControls(false);
+
+           html需要自己做屏幕适配
     
     吸顶效果：
         自定义View，滑动时计算要固定的View位置，当滑动到固定位置时禁止外部ScrollView滑动，
