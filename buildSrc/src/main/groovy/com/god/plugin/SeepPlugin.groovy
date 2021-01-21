@@ -1,5 +1,6 @@
 package com.god.plugin
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -14,5 +15,6 @@ class SeepPlugin implements Plugin<Project> {
     @Override
     void apply(Project target) {
         println '自定义插件'
+        target.extensions.getByType(BaseExtension).registerTransform(new AsmTransform(target))
     }
 }

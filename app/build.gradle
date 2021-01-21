@@ -1,6 +1,6 @@
-apply plugin: 'com.god.plugin'
 apply plugin: 'com.android.application'
 apply plugin: 'com.tencent.matrix-plugin'
+apply plugin: 'com.god.plugin'
 
 matrix {
     trace {

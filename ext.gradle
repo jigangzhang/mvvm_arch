@@ -33,6 +33,8 @@ ext {
             leakcanary         : '2.5'
     ]
 
+    //(滴滴性能检测工具)https://github.com/didi/DoraemonKit
+
     libs = [
             appcompat              : [group: 'androidx.appcompat', name: 'appcompat', version: versions.appcompat],
             constraintlayout       : [group: 'androidx.constraintlayout', name: 'constraintlayout', version: versions.constraintlayout],
@@ -50,6 +52,8 @@ ext {
             //##bugly##
             bugly_sdk              : [group: 'com.tencent.bugly', name: 'crashreport', version: 'latest.release'],
             bugly_ndk              : [group: 'com.tencent.bugly', name: 'nativecrashreport', version: 'latest.release'],
+            //APM工具，其他还有：Booster，Matrix
+            dokit                  : [group: 'com.didichuxing.doraemonkit', name: 'dokitx', version: '3.3.5'],
 
             //##Component组件##
             viewmodel              : [group: 'androidx.lifecycle', name: 'lifecycle-viewmodel', version: versions.lifecycle_version],
