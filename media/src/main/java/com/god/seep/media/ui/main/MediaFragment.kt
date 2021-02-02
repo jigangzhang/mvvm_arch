@@ -6,14 +6,20 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
 import com.god.seep.base.arch.view.BaseFragment
+import com.god.seep.base.util.CacheManager
 import com.god.seep.media.R
 import com.god.seep.media.databinding.MediaFragmentBinding
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.video.VideoListener
+import java.io.File
 
 class MediaFragment : BaseFragment<MediaFragmentBinding, MediaViewModel>(), Player.EventListener, VideoListener {
 
@@ -23,6 +29,7 @@ class MediaFragment : BaseFragment<MediaFragmentBinding, MediaViewModel>(), Play
     private lateinit var iv_pause: ImageView
     private lateinit var iv_play: ImageView
     private lateinit var mPlayer: SimpleExoPlayer
+    private lateinit var cache: SimpleCache
 
     companion object {
         fun newInstance() = MediaFragment()
@@ -45,7 +52,12 @@ class MediaFragment : BaseFragment<MediaFragmentBinding, MediaViewModel>(), Play
         activity!!.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         mPlayer = SimpleExoPlayer.Builder(mContext).build()
         mBinding.video.player = mPlayer
-        val factory = DefaultDataSourceFactory(mContext)
+        val factory = CacheDataSource.Factory()
+        val dir: File = File(context?.externalCacheDir, CacheManager.VIDEO_CACHE)
+        cache = SimpleCache(dir, NoOpCacheEvictor(), ExoDatabaseProvider(context!!))
+        factory.setCache(cache)
+        val upstreamFactory = DefaultDataSourceFactory(context!!)
+        factory.setUpstreamDataSourceFactory(upstreamFactory)
         //http://v.jiemian.com/25/d1/25d166c99cc70bdf3da03f4866f4188b_256.mp4，测试链接
         val mediaSource = ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(path))
         mPlayer.setMediaSource(mediaSource)
@@ -80,7 +92,7 @@ class MediaFragment : BaseFragment<MediaFragmentBinding, MediaViewModel>(), Play
     }
 
     override fun registerEvent() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onVideoSizeChanged(width: Int, height: Int, unappliedRotationDegrees: Int, pixelWidthHeightRatio: Float) {
@@ -140,6 +152,7 @@ class MediaFragment : BaseFragment<MediaFragmentBinding, MediaViewModel>(), Play
             mPlayer.removeListener(this)
             mPlayer.removeVideoListener(this)
             mPlayer.release()
+            cache.release()
         }
     }
 

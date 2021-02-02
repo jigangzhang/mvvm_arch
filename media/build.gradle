@@ -7,17 +7,16 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion build_version.compileSdkVersion
 
     defaultConfig {
         if (isSeprateModule.toBoolean()) {
             applicationId 'com.god.seep.media'
         }
-        minSdkVersion 19
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion build_version.minSdkVersion
+        targetSdkVersion build_version.targetSdkVersion
+        versionCode build_version.versionCode
+        versionName build_version.versionName
 
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -27,6 +26,9 @@ android {
             annotationProcessorOptions {
                 arguments = [AROUTER_MODULE_NAME: project.getName()]
             }
+        }
+        ndk {
+            abiFilters 'armeabi-v7a'
         }
     }
 
@@ -71,6 +73,14 @@ dependencies {
     //ARouter，需要在每个模块中配置
     kapt libs.arouter_compiler
     implementation libs.video_player
+
+    implementation libs.ijkPlayer
+    implementation libs.ijkPlayer_armV7a
+//    implementation libs.ijkPlayer_exo
+
+    implementation libs.GSYVideoPlayer_java_C
+//    implementation libs.GSYVideoPlayer_exo_C
+//    implementation libs.GSYVideoPlayer_ijk_C
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.10"
     implementation 'androidx.core:core-ktx:1.3.2'

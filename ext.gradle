@@ -121,7 +121,41 @@ ext {
             photo_view             : [group: 'com.github.chrisbanes', name: 'PhotoView', version: '2.3.0'],   //图片加载
 
             //视频播放器
-            video_player           : [group: 'com.google.android.exoplayer', name: 'exoplayer', version: '2.12.1'],
+            video_player           : [group: 'com.google.android.exoplayer', name: 'exoplayer', version: '2.12.3'],
+
+            //bilibili ijkplayer     required, enough for most devices.
+            ijkPlayer              : [group: 'tv.danmaku.ijk.media', name: 'ijkplayer-java', version: '0.8.8'],
+            ijkPlayer_armV7a       : [group: 'tv.danmaku.ijk.media', name: 'ijkplayer-armv7a', version: '0.8.8'],
+            // Other ABIs: optional
+            ijkPlayer_armV5        : [group: 'tv.danmaku.ijk.media', name: 'ijkplayer-armv5', version: '0.8.8'],
+            ijkPlayer_arm64        : [group: 'tv.danmaku.ijk.media', name: 'ijkplayer-arm64', version: '0.8.8'],
+            ijkPlayer_x86          : [group: 'tv.danmaku.ijk.media', name: 'ijkplayer-x86', version: '0.8.8'],
+            ijkPlayer_x86_64       : [group: 'tv.danmaku.ijk.media', name: 'ijkplayer-x86_64', version: '0.8.8'],
+            // ExoPlayer as IMediaPlayer: optional, experimental
+            ijkPlayer_exo          : [group: 'tv.danmaku.ijk.media', name: 'ijkplayer-exo', version: '0.8.8'],
+
+            //A: GSYVideoPlayer
+            // 完整版引入（包含所有）
+            GSYVideoPlayer         : [group: 'com.shuyu', name: 'GSYVideoPlayer', version: '8.0.0'],
+
+            //B: Java与SO分开引入（添加java和你想要的so支持）
+            GSYVideoPlayer_java    : [group: 'com.shuyu', name: 'gsyVideoPlayer-java', version: '8.0.0'],
+            //是否需要ExoPlayer模式
+            GSYVideoPlayer_exo     : [group: 'com.shuyu', name: 'GSYVideoPlayer-exo2', version: '8.0.0'],
+            //根据你的需求ijk模式的so
+            GSYVideoPlayer_armv5   : [group: 'com.shuyu', name: 'gsyVideoPlayer-armv5', version: '8.0.0'],
+            GSYVideoPlayer_armv7   : [group: 'com.shuyu', name: 'gsyVideoPlayer-armv7a', version: '8.0.0'],
+            GSYVideoPlayer_arm64   : [group: 'com.shuyu', name: 'gsyVideoPlayer-arm64', version: '8.0.0'],
+            GSYVideoPlayer_x86_64  : [group: 'com.shuyu', name: 'gsyVideoPlayer-x64', version: '8.0.0'],
+            GSYVideoPlayer_x86     : [group: 'com.shuyu', name: 'gsyVideoPlayer-x86', version: '8.0.0'],
+
+            //C: 支持其他格式协议的（mpeg，rtsp, concat、crypto协议）
+            //A、B普通版本支持263/264/265等，对于mpeg编码会有声音无画面情况。 C 引入的so支持mpeg编码和其他补充协议，但是so包相对变大
+            GSYVideoPlayer_java_C  : [group: 'com.shuyu', name: 'gsyVideoPlayer-java', version: '8.0.0'],
+            //是否需要ExoPlayer模式
+            GSYVideoPlayer_exo_C   : [group: 'com.shuyu', name: 'GSYVideoPlayer-exo2', version: '8.0.0'],
+            //更多ijk的编码支持
+            GSYVideoPlayer_ijk_C   : [group: 'com.shuyu', name: 'gsyVideoPlayer-ex_so', version: '8.0.0'],
 
             //第三方控件
             picker_view            : [group: 'com.contrarywind', name: 'Android-PickerView', version: '4.1.9'],
