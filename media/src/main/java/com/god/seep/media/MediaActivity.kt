@@ -4,10 +4,7 @@ import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.god.seep.base.arch.view.BaseActivity
 import com.god.seep.media.databinding.MediaActivityBinding
-import com.god.seep.media.ui.main.GSYPlayerFragment
-import com.god.seep.media.ui.main.IjkPlayerFragment
-import com.god.seep.media.ui.main.MediaFragment
-import com.god.seep.media.ui.main.MediaViewModel
+import com.god.seep.media.ui.main.*
 
 @Route(path = "/media/activity")
 class MediaActivity : BaseActivity<MediaActivityBinding, MediaViewModel>() {
@@ -39,7 +36,7 @@ class MediaActivity : BaseActivity<MediaActivityBinding, MediaViewModel>() {
 
     fun ijk(view: View) {
         supportFragmentManager.beginTransaction()
-                .replace(R.id.container, IjkPlayerFragment())
+                .replace(R.id.container, MediaPlayerFragment())
                 .commitNow()
 
     }

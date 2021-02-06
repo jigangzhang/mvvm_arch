@@ -41,7 +41,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:onClick="ijk"
-                android:text="IJK" />
+                android:text="MEDIA" />
 
             <TextView
                 android:layout_width="0dp"
