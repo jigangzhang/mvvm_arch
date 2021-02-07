@@ -1,9 +1,11 @@
 package com.god.seep.media
 
+import android.content.Intent
 import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.god.seep.base.arch.view.BaseActivity
 import com.god.seep.media.databinding.MediaActivityBinding
+import com.god.seep.media.ui.audio.AudioActivity
 import com.god.seep.media.ui.main.*
 
 @Route(path = "/media/activity")
@@ -18,13 +20,13 @@ class MediaActivity : BaseActivity<MediaActivityBinding, MediaViewModel>() {
     }
 
     override fun initData() {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, GSYPlayerFragment())
-                    .commitNow()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.container, GSYPlayerFragment())
+                .commitNow()
     }
 
     override fun registerEvent() {
-
+        mBinding.speaker.setOnClickListener { startActivity(Intent(this, AudioActivity::class.java)) }
     }
 
     fun exo(view: View) {

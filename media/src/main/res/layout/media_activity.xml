@@ -51,5 +51,16 @@
                 android:onClick="exo"
                 android:text="EXO" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/speaker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:padding="@dimen/dp_10"
+            android:src="@android:drawable/ic_btn_speak_now"
+            app:layout_constraintBottom_toTopOf="@+id/ll_tab"
+            app:layout_constraintRight_toRightOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

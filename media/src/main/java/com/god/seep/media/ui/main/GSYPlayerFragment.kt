@@ -27,7 +27,8 @@ class GSYPlayerFragment : BaseFragment<GsyplayerFragmentBinding, MediaViewModel>
 
     override fun initData() {
 //        val source1 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4"
-        val source1 = "https://yc-shop-dev.oss-cn-shenzhen.aliyuncs.com/secretUpload/20210122/a91b0cf4-a0a8-43c6-9c68-f1bec6ad1168.mp4"
+        val source1 = "file:///storage/emulated/0/Android/data/com.god.seep.media/files/Music/0207181814.wav"
+//        val source1 = "https://yc-shop-dev.oss-cn-shenzhen.aliyuncs.com/secretUpload/20210122/a91b0cf4-a0a8-43c6-9c68-f1bec6ad1168.mp4"
         mBinding.player.setUp(source1, true, "测试视频")
         val thumb = ImageView(context)
         thumb.scaleType = ImageView.ScaleType.CENTER_CROP

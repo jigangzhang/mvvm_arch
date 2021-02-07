@@ -31,7 +31,8 @@ class MediaPlayerFragment : BaseFragment<MediaplayerFragmentBinding, MediaViewMo
     }
 
     override fun initData() {
-        val source = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4"
+//        val source = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4"
+        val source = "file:///storage/emulated/0/Android/data/com.god.seep.media/files/Music/0207181814.wav"
 //        val source = "https://yc-shop-dev.oss-cn-shenzhen.aliyuncs.com/secretUpload/20210122/a91b0cf4-a0a8-43c6-9c68-f1bec6ad1168.mp4"
         mediaWithController(source)
         mediaWithSurface(source)
