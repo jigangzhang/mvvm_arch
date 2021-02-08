@@ -1,14 +1,21 @@
 package com.god.seep.media.video
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
+import android.graphics.Matrix
 import android.hardware.Camera
+import android.os.Environment
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.god.seep.media.audio.format
 import timber.log.Timber
+import java.io.File
+import java.io.FileOutputStream
 import java.lang.IllegalArgumentException
+import java.util.*
 import kotlin.math.abs
 
 
@@ -155,9 +162,22 @@ class CameraRecord {
         camera.setDisplayOrientation(result)
     }
 
-    fun takePicture() {
+    fun takePicture(context: Context) {
         camera.takePicture({}, null, { data, camera ->
-            val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
+            var bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
+            val storeDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val photo = File(storeDir, "${Date().format()}.jpg")
+            val fos = FileOutputStream(photo)
+            val matrix = Matrix()
+            bitmap = if (currentId == backCameraId) {
+                matrix.setRotate(90f)
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            } else {
+                matrix.setRotate(270f)
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            }
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.close()
         })
     }
 

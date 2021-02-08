@@ -38,7 +38,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, BaseViewModel>() {
     }
 
     override fun registerEvent() {
-        mBinding.camera.setOnClickListener { cameraRecord.takePicture() }
+        mBinding.camera.setOnClickListener { cameraRecord.takePicture(this) }
         mBinding.tvSwitch.setOnClickListener { cameraRecord.switchCamera(mBinding.surface) }
     }
 }
