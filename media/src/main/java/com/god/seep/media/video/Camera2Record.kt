@@ -1,4 +1,4 @@
-package com.god.seep.media.audio
+package com.god.seep.media.video
 
 import android.content.Context
 import android.hardware.camera2.CameraManager
