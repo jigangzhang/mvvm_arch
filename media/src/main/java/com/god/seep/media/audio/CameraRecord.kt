@@ -15,7 +15,7 @@ import java.util.*
 //采样率：44.1kHz
 const val SAMPLE_RATE = 44100
 
-class AudioRecord(val context: Context) : Thread() {
+class CameraRecord(val context: Context) : Thread() {
     private val minBufferSize: Int = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT)
     private val audioRecord: AudioRecord
     private var started = false

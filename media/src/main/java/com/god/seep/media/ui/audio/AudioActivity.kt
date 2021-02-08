@@ -15,7 +15,7 @@ import java.util.*
 
 class AudioActivity : BaseActivity<ActivityAudioBinding, BaseViewModel>() {
     private lateinit var fileAdapter: FileAdapter
-    private lateinit var audioRecord: AudioRecord
+    private lateinit var cameraRecord: CameraRecord
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio
@@ -27,7 +27,7 @@ class AudioActivity : BaseActivity<ActivityAudioBinding, BaseViewModel>() {
 
     override fun initData() {
         mBinding.view = this
-        audioRecord = AudioRecord(this)
+        cameraRecord = CameraRecord(this)
         fileAdapter = FileAdapter()
         mBinding.list.adapter = fileAdapter
         fileAdapter.setOnItemClickListener { adapter, view, position ->
@@ -48,22 +48,22 @@ class AudioActivity : BaseActivity<ActivityAudioBinding, BaseViewModel>() {
     override fun registerEvent() {
         mBinding.ivSpeaker.setOnClickListener {
             mBinding.recording = true
-            audioRecord.startRecord()
+            cameraRecord.startRecord()
         }
         mBinding.ivSpeakerStop.setOnClickListener {
             mBinding.recording = false
-            audioRecord.stopRecord()
+            cameraRecord.stopRecord()
             refreshFile()
         }
     }
 
     private fun refreshFile() {
-        fileAdapter.setNewInstance(audioRecord.fetchFiles().toMutableList())
+        fileAdapter.setNewInstance(cameraRecord.fetchFiles().toMutableList())
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        audioRecord.release()
+        cameraRecord.release()
     }
 }
 
