@@ -4,8 +4,6 @@
     package="com.god.seep.media">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -13,11 +11,31 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
-        android:name="android.hardware.Camera"
+        android:name="android.hardware.camera"
         android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
 
-    <application>
-        <activity android:name=".MediaActivity"></activity>
+    <application
+        android:name=".App"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.camera.CameraActivity"
+            android:hardwareAccelerated="true" />
+        <activity android:name=".ui.audio.AudioActivity" />
+        <activity
+            android:name=".MediaActivity"
+            android:theme="@style/startTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
