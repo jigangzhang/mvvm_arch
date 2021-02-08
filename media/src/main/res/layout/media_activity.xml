@@ -62,5 +62,15 @@
             android:src="@android:drawable/ic_btn_speak_now"
             app:layout_constraintBottom_toTopOf="@+id/ll_tab"
             app:layout_constraintRight_toRightOf="parent" />
+
+        <ImageView
+            android:id="@+id/camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:src="@android:drawable/ic_menu_camera"
+            app:layout_constraintBottom_toTopOf="@+id/speaker"
+            app:layout_constraintLeft_toLeftOf="@+id/speaker"
+            app:layout_constraintRight_toRightOf="@+id/speaker" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

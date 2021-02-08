@@ -227,5 +227,34 @@ fun playPcmStatic(pcm: File) {
 }
 
 fun playPcmStream(pcm: File) {
-
+    val channel = AudioFormat.CHANNEL_IN_STEREO
+    // 设置音频信息属性, 1.设置支持多媒体属性，比如audio，video;  2.设置音频格式，比如 music
+    val attrs = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
+    //设置音频格式; 1. 设置采样率; 2. 设置采样位数;  3. 设置声道
+    val format = AudioFormat.Builder()
+            .setSampleRate(SAMPLE_RATE)
+            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+            .setChannelMask(channel)
+            .build()
+    val bufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE, channel, AudioFormat.ENCODING_PCM_16BIT)
+    val audioTrack = AudioTrack(attrs, format, bufferSize, AudioTrack.MODE_STREAM, AudioManager.AUDIO_SESSION_ID_GENERATE)
+    audioTrack.play() //播放，等待数据
+    Thread {
+        val fis = FileInputStream(pcm)
+        val buffer = ByteArray(bufferSize)
+        var read = fis.read(buffer)
+        while (read > 0) {
+            Timber.e("AudioTrack state: ${audioTrack.state}, play state: ${audioTrack.playState}")
+            audioTrack.write(buffer, 0, bufferSize)
+            read = fis.read(buffer)
+        }
+        Timber.e("AudioTrack state: ${audioTrack.state}, play state: ${audioTrack.playState}")
+        audioTrack.stop()
+        Timber.e("AudioTrack state: ${audioTrack.state}, play state: ${audioTrack.playState}")
+        audioTrack.release()
+        fis.close()
+    }.start()
 }

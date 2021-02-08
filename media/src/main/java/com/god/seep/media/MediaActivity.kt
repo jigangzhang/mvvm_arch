@@ -1,11 +1,15 @@
 package com.god.seep.media
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.god.seep.base.arch.view.BaseActivity
 import com.god.seep.media.databinding.MediaActivityBinding
 import com.god.seep.media.ui.audio.AudioActivity
+import com.god.seep.media.ui.camera.CameraActivity
 import com.god.seep.media.ui.main.*
 
 @Route(path = "/media/activity")
@@ -20,6 +24,8 @@ class MediaActivity : BaseActivity<MediaActivityBinding, MediaViewModel>() {
     }
 
     override fun initData() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 100)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, GSYPlayerFragment())
                 .commitNow()
@@ -27,6 +33,7 @@ class MediaActivity : BaseActivity<MediaActivityBinding, MediaViewModel>() {
 
     override fun registerEvent() {
         mBinding.speaker.setOnClickListener { startActivity(Intent(this, AudioActivity::class.java)) }
+        mBinding.camera.setOnClickListener { startActivity(Intent(this, CameraActivity::class.java)) }
     }
 
     fun exo(view: View) {

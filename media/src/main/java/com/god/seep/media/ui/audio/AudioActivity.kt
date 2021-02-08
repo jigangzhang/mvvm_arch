@@ -7,10 +7,7 @@ import com.god.seep.base.adapter.BaseRecyclerViewAdapter
 import com.god.seep.base.arch.view.BaseActivity
 import com.god.seep.base.arch.viewmodel.BaseViewModel
 import com.god.seep.media.R
-import com.god.seep.media.audio.AudioRecord
-import com.god.seep.media.audio.format
-import com.god.seep.media.audio.formatFileSize
-import com.god.seep.media.audio.playPcmStatic
+import com.god.seep.media.audio.*
 import com.god.seep.media.databinding.ActivityAudioBinding
 import com.god.seep.media.databinding.ItemAudioBinding
 import java.io.File
@@ -36,8 +33,10 @@ class AudioActivity : BaseActivity<ActivityAudioBinding, BaseViewModel>() {
         fileAdapter.setOnItemClickListener { adapter, view, position ->
             //play
             val item = fileAdapter.getItem(position)
-            if (item.name.endsWith("pcm"))
-                playPcmStatic(item)
+            if (item.name.endsWith("pcm")) {
+                playPcmStream(item)
+//                playPcmStatic(item)
+            }
         }
         refreshFile()
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
