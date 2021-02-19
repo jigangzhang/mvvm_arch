@@ -22,6 +22,7 @@ import kotlin.math.abs
 
 /**
  * 参考：https://blog.csdn.net/u011418943/article/details/107279236
+ * 变形适配：https://www.jianshu.com/p/067889611ae7
  */
 class Camera2Record(val context: Context) {
     private val cameraManager: CameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager

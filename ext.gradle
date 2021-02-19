@@ -29,6 +29,7 @@ ext {
             rxandroid          : '3.0.0',
             permissionx        : '1.4.0',
             glide              : '4.11.0',
+            camerax_version    : '1.0.0-rc02',
             stetho             : '1.5.1',
             leakcanary         : '2.5'
     ]
@@ -156,6 +157,17 @@ ext {
             GSYVideoPlayer_exo_C   : [group: 'com.shuyu', name: 'GSYVideoPlayer-exo2', version: '8.0.0'],
             //更多ijk的编码支持
             GSYVideoPlayer_ijk_C   : [group: 'com.shuyu', name: 'gsyVideoPlayer-ex_so', version: '8.0.0'],
+
+            // CameraX core library using the camera2 implementation
+            // The following line is optional, as the core library is included indirectly by camera-camera2
+            camerax_core           : [group: 'androidx.camera', name: 'camera-core', version: versions.camerax_version],
+            camerax_camera2        : [group: 'androidx.camera', name: 'camera-camera2', version: versions.camerax_version],
+            // If you want to additionally use the CameraX Lifecycle library
+            camerax_lifecycle      : [group: 'androidx.camera', name: 'camera-lifecycle', version: versions.camerax_version],
+            // If you want to additionally use the CameraX View class
+            camerax_view           : [group: 'androidx.camera', name: 'camera-view', version: '1.0.0-alpha21'],
+            // If you want to additionally use the CameraX Extensions library
+            camerax_ext            : [group: 'androidx.camera', name: 'camera-extensions', version: '1.0.0-alpha21'],
 
             //第三方控件
             picker_view            : [group: 'com.contrarywind', name: 'Android-PickerView', version: '4.1.9'],
