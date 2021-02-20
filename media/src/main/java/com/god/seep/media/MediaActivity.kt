@@ -11,6 +11,7 @@ import com.god.seep.media.databinding.MediaActivityBinding
 import com.god.seep.media.ui.audio.AudioActivity
 import com.god.seep.media.ui.camera.CameraActivity
 import com.god.seep.media.ui.main.*
+import com.god.seep.media.ui.media.MixMediaActivity
 
 @Route(path = "/media/activity")
 class MediaActivity : BaseActivity<MediaActivityBinding, MediaViewModel>() {
@@ -34,6 +35,7 @@ class MediaActivity : BaseActivity<MediaActivityBinding, MediaViewModel>() {
     override fun registerEvent() {
         mBinding.speaker.setOnClickListener { startActivity(Intent(this, AudioActivity::class.java)) }
         mBinding.camera.setOnClickListener { startActivity(Intent(this, CameraActivity::class.java)) }
+        mBinding.media.setOnClickListener { startActivity(Intent(this, MixMediaActivity::class.java)) }
     }
 
     fun exo(view: View) {
