@@ -8,8 +8,79 @@
 
     </data>
 
-    <FrameLayout
-        android:id="@+id/container"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/ll_tab"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_tab"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/container">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="gsy"
+                android:text="GSY" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="ijk"
+                android:text="MEDIA" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:onClick="exo"
+                android:text="EXO" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/speaker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:padding="@dimen/dp_10"
+            android:src="@android:drawable/ic_btn_speak_now"
+            app:layout_constraintBottom_toTopOf="@+id/ll_tab"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <ImageView
+            android:id="@+id/camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:src="@android:drawable/ic_menu_camera"
+            app:layout_constraintBottom_toTopOf="@+id/speaker"
+            app:layout_constraintLeft_toLeftOf="@+id/speaker"
+            app:layout_constraintRight_toRightOf="@+id/speaker" />
+
+        <ImageView
+            android:id="@+id/media"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:src="@android:drawable/presence_video_away"
+            app:layout_constraintBottom_toTopOf="@+id/camera"
+            app:layout_constraintLeft_toLeftOf="@+id/speaker"
+            app:layout_constraintRight_toRightOf="@+id/speaker" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
