@@ -39,6 +39,10 @@ android {
                 manifest.srcFile 'src/main/debug/AndroidManifest.xml'
             } else {
                 manifest.srcFile 'src/main/AndroidManifest.xml'
+                //集成开发模式下排除debug文件夹中的所有Java文件，src/main/java/debug，debug下全部是组件模式下需要的东西，不能将业务相关的东西放到里面，比如：application、入口activity等
+                java {
+                    exclude 'debug/**'
+                }
             }
         }
     }
