@@ -36,7 +36,7 @@ android {
         versionName build_version.versionName
 
         multiDexEnabled true
-        flavorDimensions ""
+        flavorDimensions "env", "vip"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -68,18 +68,27 @@ android {
      */
     productFlavors {
         pro {
-            dimension ""
+            dimension "env"
             buildConfigField "String", "environment", '"pro"'
         }
         dev {
-            dimension ""
+            dimension "env"
             buildConfigField "String", "environment", '"dev"'
         }
         vip {
-            dimension ""
+            dimension "vip"
+            /**
+             * 动态添加自定义资源，在 BuildType 和 ProductFlavor 对象中可以使用
+             *  res/values 文件中定义的一样
+             * resValue(String type,String name,String value)
+             * type:生成字段的类型(id、string、bool等)
+             * name:生成字段的常量名称
+             * value:生成字段的常量值
+             */
+            resValue 'string', 'welcome', 'miui'
         }
         free {
-            dimension ""
+            dimension "vip"
         }
     }
 
