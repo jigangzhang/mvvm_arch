@@ -16,6 +16,7 @@ android {
     prop.load(dis)
     def storePath = prop.getProperty('keystore.path')
     signingConfigs {
+        def storeFile = System.getenv('STORE_FILE')     //从环境变量中取值
         release {
             if (storePath != null) {
                 storeFile file(storePath)
@@ -36,7 +37,6 @@ android {
         versionName build_version.versionName
 
         multiDexEnabled true
-        flavorDimensions "env", "vip"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -66,6 +66,7 @@ android {
     /**
      * 多渠道包
      */
+    flavorDimensions "env", "vip"   //必须放在 defaultConfig 外面
     productFlavors {
         pro {
             dimension "env"
