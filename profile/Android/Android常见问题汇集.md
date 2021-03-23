@@ -218,6 +218,11 @@
         WindowManager.LayoutParams.FLAG_FULLSCREEN（而不是使用SYSTEM_UI_FLAG_FULLSCREEN）来隐藏StatusBar是一个一直持续隐藏的状态。这时你仍然可以使用SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_STABLE隐藏Actionbar，并且不会因为ActionBar的显示或隐藏而不稳定
         fitSystemWindow，只有设置了View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION或View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN，View的 fitSystemWindow=true才会有效果
         其他具体见链接
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        View decorView = getWindow().getDecorView();
+        int uiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiVisibility);
 
 #### 常见场景
 
