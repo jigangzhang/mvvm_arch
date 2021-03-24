@@ -223,6 +223,17 @@
         View decorView = getWindow().getDecorView();
         int uiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
         decorView.setSystemUiVisibility(uiVisibility);
+    
+    事件分发（https://mp.weixin.qq.com/s/sSPFz3E5gncYiMMFtF_xlg）：
+        FLAG_DISALLOW_INTERCEPT 一旦设置后，ViewGroup 将无法拦截除了 ACTION_DOWN 以外的其他点击事件。
+        这是因为 ViewGroup 在分发事件时，如果是 ACTION_DOWN 就会重置 FLAG_DISALLOW_INTERCEPT 这个标志位，将导致子 View 中设置的这个标记位无效。
+        因此，当面对 ACTION_DOWN 事件时，ViewGroup 总是会调用自己的 onInterceptTouchEvent 方法来询问自己是否要拦截事件
+        onInterceptTouchEvent 可能在子 View 设置 requestDisallowInterceptTouchEvent 后不一定被调用到，所以当我们想提前处理所有的点击事件，要选择 dispatchTouchEvent，只有这个方法才能确保每次都被调用
+        子View接收到DOWN事件后，需要调用 onInterceptTouchEvent 才能继续接收MOVE、UP等事件
+        
+    okhttp：缓存，支持网络请求并使用缓存时，返回304表示资源未修改，直接返回缓存响应，缓存命中
+            支持缓存时，若不想某个接口使用缓存，可以使 response.cacheControl.noStore 为true，跳过缓存
+            只有GET请求和响应可以被缓存，缓存信息包括响应体、handshake信息等
 
 #### 常见场景
 
