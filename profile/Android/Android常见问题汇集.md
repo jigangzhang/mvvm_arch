@@ -223,6 +223,37 @@
         View decorView = getWindow().getDecorView();
         int uiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
         decorView.setSystemUiVisibility(uiVisibility);
+    
+    事件分发（https://mp.weixin.qq.com/s/sSPFz3E5gncYiMMFtF_xlg）：
+        FLAG_DISALLOW_INTERCEPT 一旦设置后，ViewGroup 将无法拦截除了 ACTION_DOWN 以外的其他点击事件。
+        这是因为 ViewGroup 在分发事件时，如果是 ACTION_DOWN 就会重置 FLAG_DISALLOW_INTERCEPT 这个标志位，将导致子 View 中设置的这个标记位无效。
+        因此，当面对 ACTION_DOWN 事件时，ViewGroup 总是会调用自己的 onInterceptTouchEvent 方法来询问自己是否要拦截事件
+        onInterceptTouchEvent 可能在子 View 设置 requestDisallowInterceptTouchEvent 后不一定被调用到，所以当我们想提前处理所有的点击事件，要选择 dispatchTouchEvent，只有这个方法才能确保每次都被调用
+        子View接收到DOWN事件后，需要调用 onInterceptTouchEvent 才能继续接收MOVE、UP等事件
+        
+    okhttp：缓存，支持网络请求并使用缓存时，返回304表示资源未修改，直接返回缓存响应，缓存命中
+            支持缓存时，若不想某个接口使用缓存，可以使 response.cacheControl.noStore 为true，跳过缓存
+            只有GET请求和响应可以被缓存，缓存信息包括响应体、handshake信息等
+    
+    Glide：
+        磁盘缓存策略（DiskCacheStrategy）：
+            一般情况下使用 DiskCacheStrategy.RESOURCE。如果APP以不同大小多次使用相同的资源，并且愿意牺牲一些速度和磁盘空间来换取更低的带宽使用，那么可能需要考虑使用DiskCacheStrategy.DATA或DiskCacheStrategy.ALL
+            DiskCacheStrategy.ALL：同时使用“DATA”和“RESOURCE”缓存远程数据，只使用“RESOURCE”缓存本地数据
+            DiskCacheStrategy.NONE：不缓存
+            DiskCacheStrategy.DATA：在解码之前，将检索到的数据直接写入磁盘缓存
+            DiskCacheStrategy.RESOURCE：在数据被解码后，将资源写入磁盘
+            DiskCacheStrategy.AUTOMATIC：尝试基于数据源的DataFetcher和ResourceEncoder的EncodeStrategy智能选择策略
+        Priority：图片加载的优先级设置
+        数据加载次序（Engine.start）：
+            ActiveResources
+            MemoryCache
+            jobs，链路复用
+            start new job，依次是磁盘缓存（diskCacheExecutor）、resource加载（其他线程池），在线程池中加载、解码（GlideExecutor、diskCacheExecutor（磁盘缓存的资源只从diskCacheExecutor中加载））
+            ResourceCacheGenerator（解码后的数据缓存加载）、DataCacheGenerator（原始数据缓存加载）、SourceGenerator（数据源加载）
+        内存缓存：LruResourceCache，LinkedHashMap实现LRU（传true）
+        磁盘缓存：DataFetcher，实际加载数据的接口，DiskLruCache
+        原始数据：SourceGenerator加载，将数据进行缓存等
+        数据解码：ResourceDecoder，检查文件头，验证它们是否与解码器期望处理的内容相匹配（例如，一个GIF解码器应该验证图像是否包含GIF头块），还有VideoDecoder，将视频帧解码为Bitmap
 
 #### 常见场景
 
@@ -348,6 +379,12 @@
         结点类型为LinkedHashMapEntry，其中有before、after，指向结点的前后结点
         每次做保存数据时，对新加的结点进行before、after结点的链接，同时也会调用linkNodeLast 移动tail指针
         做遍历操作时，使用双向链表：head、tail进行遍历
+        accessOrder为true时，可用作LRU算法的实现
+    
+    LruCache：以LinkedHashMap accessOrder=true 实现算法
+        get、put操作时将节点移动链表尾部
+        缓存容量满时，从链表头部开始移除节点（同时减去节点大小，以判断当前容量）
+        移除最近最少使用的项（从头部开始）
         
     HashSet：构造函数中创建了一个HashMap，所有操作（存取等）都是通过HashMap实现，存到数据对应HashMap的key，value是PRESENT（是个伪值）    
 
