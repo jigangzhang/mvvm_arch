@@ -16,7 +16,9 @@
 
 ## Android
 
-##### 音视频系列 [音视频系列]()
+##### 多线程 [多线程](profile/Android/多线程.md)
+
+##### 音视频系列 [音视频系列](profile/音视频/音视频.md)
 
 ##### Android系统启动流程 [系统启动流程](profile/Android/Android系统启动流程.md)
 
