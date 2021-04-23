@@ -67,7 +67,12 @@
             修改的dpi、density、scaledDensity未全部生效，感觉就是部分生效（问题手机是华为10.1系统）
 
 #### View相关
-    
+
+    HTTP、HTTPS：
+        https://blog.csdn.net/xiaoming100001/article/details/81109617
+    MVC、MVP、MVVM：
+        https://blog.csdn.net/q821901733/article/details/88122922
+        https://blog.csdn.net/donkor_/article/details/54970769
     SingleInstance启动模式：
         在新的任务栈中运行，且栈中只允许运行此Activity的一个实例
         这个Activity获得一个唯一的任务栈，且只有它自己在其中运行，如果它以相同的intent再次启动，那么该task将被带至前台，onNewIntent()方法调用。
